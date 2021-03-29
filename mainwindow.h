@@ -2,10 +2,8 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include <QDebug>
-#include <QTimer>
-#include <QDateTime>
-#include <QUdpSocket>
-#include <QNetworkDatagram>
+#include <memory>
+class UdpListener;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -17,11 +15,7 @@ public:
     ~MainWindow();
 private:
     Ui::MainWindow *ui;
-public slots:
-    void readyread();
-private:
-    QUdpSocket Socket;
-    quint16 port=7654;
+    std::shared_ptr<UdpListener> Listener;
 private:
     void StartListening();
     void StopListening();
