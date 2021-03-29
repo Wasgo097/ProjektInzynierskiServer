@@ -18,15 +18,12 @@ public:
 private:
     Ui::MainWindow *ui;
 public slots:
-    void start();
-    void stop();
-    void timeout();
     void readyread();
-    void broadcast();
 private:
     QUdpSocket Socket;
-    QTimer Timer;
-    quint16 port=2020;
-
+    quint16 port=7654;
+private:
+    void StartListening();
+    void StopListening();
 };
 #endif // MAINWINDOW_H

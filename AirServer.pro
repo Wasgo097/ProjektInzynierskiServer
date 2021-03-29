@@ -10,10 +10,12 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    udplistener.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    udplistener.h
 
 FORMS += \
     mainwindow.ui
