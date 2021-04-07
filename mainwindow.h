@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <memory>
 class UdpListener;
+class DBManager;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -16,6 +17,7 @@ public:
 private:
     Ui::MainWindow *ui;
     std::shared_ptr<UdpListener> Listener;
+    std::shared_ptr<DBManager> DbManager;
 private:
     void StartListening();
     void StopListening();

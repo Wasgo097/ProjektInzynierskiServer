@@ -12,11 +12,13 @@ SOURCES += \
     dbmanager.cpp \
     main.cpp \
     mainwindow.cpp \
+    serverinstance.cpp \
     udplistener.cpp
 
 HEADERS += \
     dbmanager.h \
     mainwindow.h \
+    serverinstance.h \
     udplistener.h
 
 FORMS += \
