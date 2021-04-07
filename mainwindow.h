@@ -3,8 +3,7 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <memory>
-class UdpListener;
-class DBManager;
+class ServerInstance;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -15,9 +14,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private:
-    Ui::MainWindow *ui;
-    std::shared_ptr<UdpListener> Listener;
-    std::shared_ptr<DBManager> DbManager;
+    Ui::MainWindow *ui=nullptr;
+    ServerInstance * SInstance=nullptr;
 private:
     void StartListening();
     void StopListening();
