@@ -6,8 +6,8 @@ class DBManager;
 class MainWindow;
 class ServerInstance{
 public:
-    ServerInstance(ServerInstance & Other)=delete;
-    void operator =(ServerInstance & Other)=delete;
+    ServerInstance(const ServerInstance & Other)=delete;
+    void operator =(const ServerInstance & Other)=delete;
     static ServerInstance *GetInstance(MainWindow * Window);
     //static ServerInstance *GetInstance();
     static void ClearInstance();
@@ -22,5 +22,4 @@ private:
     std::shared_ptr<DBManager> DbManager;
     MainWindow * Window;
 };
-ServerInstance * ServerInstance::Instance=nullptr;
 #endif // SERVERINSTANCE_H

@@ -3,6 +3,7 @@
 #include "serverinstance.h"
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
+    //ServerInstance::ClearInstance();
     SInstance=ServerInstance::GetInstance(this);
     StartListening();
 }
