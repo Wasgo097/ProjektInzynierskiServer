@@ -2,10 +2,11 @@
 #include "mainwindow.h"
 #include "udplistener.h"
 #include "dbmanager.h"
+#include "Global.h"
 ServerInstance * ServerInstance::Instance=nullptr;
-ServerInstance::ServerInstance(MainWindow *Window):Window{Window}{
-    Listener=std::shared_ptr<UdpListener>(new UdpListener(this->Window));
-    DbManager=std::shared_ptr<DBManager>(new DBManager(this->Window));
+ServerInstance::ServerInstance(MainWindow *Window):_window{Window}{
+    _listener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+    _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
 }
 ServerInstance *ServerInstance::GetInstance(MainWindow *Window){
     if(Instance==nullptr){
@@ -13,12 +14,12 @@ ServerInstance *ServerInstance::GetInstance(MainWindow *Window){
     }
     return Instance;
 }
-//ServerInstance *ServerInstance::GetInstance(){
-//    if(Instance!=nullptr)
-//        return Instance;
-//    else
-//        return nullptr;
-//}
+ServerInstance *ServerInstance::GetInstance(){
+    if(Instance!=nullptr)
+        return Instance;
+    else
+        return Instance;
+}
 void ServerInstance::ClearInstance(){
     if(Instance!=nullptr){
         delete Instance;
@@ -26,10 +27,26 @@ void ServerInstance::ClearInstance(){
     }
 }
 void ServerInstance::StartListening(){
-    if(Listener)
-        Listener->start();
+    if(_listener){
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Start existing listener";
+#endif
+        _listener->start();
+    }
+    else{
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Start new listener";
+#endif
+        _listener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+        _listener->start();
+    }
 }
 void ServerInstance::StopListening(){
-    Listener->quit();
-    Listener.reset();
+    if(_listener){
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Stop existing listener";
+#endif
+        _listener->quit();
+        _listener.reset();
+    }
 }

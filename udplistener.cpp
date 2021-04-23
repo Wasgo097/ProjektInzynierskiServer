@@ -1,40 +1,36 @@
 #include "udplistener.h"
 #include "mainwindow.h"
-UdpListener::UdpListener(MainWindow * Parent):QThread{Parent}
-{
-    if(!Socket.bind(port)){
-        qDebug()<<Socket.errorString();
-        return;
+#include "Global.h"
+UdpListener::UdpListener(MainWindow * Parent):QThread{Parent}{
+    if(!_socket.bind(PORT)){
+        qDebug()<<_socket.errorString();
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Listening unsuccessfully";
+#endif
+        this->exit(-1);
+        this->deleteLater();
     }
     else{
-        qDebug()<<"Started udp on "<<Socket.localAddress()<<" : "<<Socket.localPort();
-        connect(&Socket,&QUdpSocket::readyRead,this,&UdpListener::readyread);
+        qDebug()<<"Started udp on "<<_socket.localAddress()<<" : "<<_socket.localPort();
+        connect(&_socket,&QUdpSocket::readyRead,this,&UdpListener::ReadyRead);
     }
 }
-
-UdpListener::~UdpListener()
-{
-    qDebug()<<"!UdpListener";
-    disconnect(&Socket,&QUdpSocket::readyRead,this,&UdpListener::readyread);
+UdpListener::~UdpListener(){
+    qDebug()<<"~UdpListener";
+    _socket.close();
+    disconnect(&_socket,&QUdpSocket::readyRead,this,&UdpListener::ReadyRead);
 }
-
-void UdpListener::quit()
-{
-    qDebug()<<"See ya";
-    Socket.close();
-    QThread::quit();
-}
-
-void UdpListener::readyread()
-{
+//void UdpListener::Quit(){
+//#ifdef GLOBAL_DEBUG
+//    qDebug()<<"Close socket";
+//#endif
+//    _socket.close();
+//    QThread::quit();
+//}
+void UdpListener::ReadyRead(){
     QString date=QDateTime::currentDateTime().toString();
-    if(Socket.hasPendingDatagrams()){
-        QNetworkDatagram datagram=Socket.receiveDatagram();
+    if(_socket.hasPendingDatagrams()){
+        QNetworkDatagram datagram=_socket.receiveDatagram();
         qDebug()<<"Read: "<<datagram.data()<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date;
     }
-}
-
-void UdpListener::run()
-{
-    qDebug()<<"Run";
 }

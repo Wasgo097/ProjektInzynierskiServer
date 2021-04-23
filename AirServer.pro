@@ -16,6 +16,7 @@ SOURCES += \
     udplistener.cpp
 
 HEADERS += \
+    Global.h \
     dbmanager.h \
     mainwindow.h \
     serverinstance.h \
@@ -28,3 +29,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    Database.db

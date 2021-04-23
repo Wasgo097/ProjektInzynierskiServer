@@ -4,23 +4,16 @@
 #include <QDebug>
 #include <QtSql>
 #include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QPluginLoader>
-#include <QVariant>
 class MainWindow;
-class DBManager : public QThread
-{
+class DBManager : public QThread{
     Q_OBJECT
 public:
     explicit DBManager(MainWindow * Parent=nullptr);
     virtual ~DBManager();
-public:
-private:
-private:
 protected:
-    void run()override;
-    void ConnectDB();
-protected:
+    void run()override{}
+    bool ConnectDB();
+private:
+    QSqlDatabase _db;
 };
-
 #endif // DBMANAGER_H

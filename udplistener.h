@@ -6,22 +6,19 @@
 #include <QDateTime>
 #include <QDebug>
 class MainWindow;
-class UdpListener : public QThread
-{
+class UdpListener : public QThread{
     Q_OBJECT
 public:
     explicit UdpListener(MainWindow * Parent=nullptr);
     virtual ~UdpListener();
-signals:
 public slots:
-    void quit();
-    void readyread();
+    //void Quit();
+    void ReadyRead();
 protected:
-    void run()override;
+    void run()override{}
 private:
-    MainWindow * ParentWindow;
-    QUdpSocket Socket;
-    const quint16 port=7654;
+    MainWindow * _window;
+    QUdpSocket _socket;
+    const quint16 PORT=7654;
 };
-
 #endif // UDPLISTENER_H
