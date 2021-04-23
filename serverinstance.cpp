@@ -2,7 +2,6 @@
 #include "mainwindow.h"
 #include "udplistener.h"
 #include "dbmanager.h"
-#include "Global.h"
 ServerInstance * ServerInstance::Instance=nullptr;
 ServerInstance::ServerInstance(MainWindow *Window):_window{Window}{
     _listener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
@@ -49,4 +48,12 @@ void ServerInstance::StopListening(){
         _listener->quit();
         _listener.reset();
     }
+}
+void ServerInstance::SetConditions(Conditions src){
+    _current_conditions.Resourc_mtx.lock();
+    _current_conditions.Resource=src;
+    _current_conditions.Resourc_mtx.unlock();
+}
+Conditions ServerInstance::GetConditions() const{
+   return _current_conditions.Resource;
 }
