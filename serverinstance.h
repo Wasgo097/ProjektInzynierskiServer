@@ -1,7 +1,6 @@
 #ifndef SERVERINSTANCE_H
 #define SERVERINSTANCE_H
 #include <memory>
-#include <queue>
 #include "Global.h"
 class UdpListener;
 class DBManager;
@@ -21,10 +20,10 @@ protected:
     ServerInstance(MainWindow * Window);
     static ServerInstance * Instance;
 private:
+    MainWindow * _window;
     std::shared_ptr<UdpListener> _listener;
     std::shared_ptr<DBManager> _dbManager;
-    MainWindow * _window;
     ThreadingResourcesLight<Condition> _current_conditions;
-    ThreadingResourcesLight<std::queue<Measurement>> _measurements;
+    //ThreadingResourcesLight<std::queue<Measurement>> _measurements;
 };
 #endif // SERVERINSTANCE_H

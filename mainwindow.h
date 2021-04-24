@@ -14,7 +14,7 @@ public:
     ~MainWindow();
 private:
     Ui::MainWindow *ui=nullptr;
-    ServerInstance *_serverInstance=nullptr;
+    ServerInstance *_server_instance=nullptr;
 private:
     void StartListening();
     void StopListening();

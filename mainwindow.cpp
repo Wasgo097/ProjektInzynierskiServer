@@ -4,7 +4,7 @@
 #include "Global.h"
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
-    _serverInstance=ServerInstance::GetInstance(this);
+    _server_instance=ServerInstance::GetInstance(this);
     StartListening();
 }
 MainWindow::~MainWindow(){
@@ -12,10 +12,10 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 void MainWindow::StartListening(){
-    if(_serverInstance!=nullptr)
-        _serverInstance->StartListening();
+    if(_server_instance!=nullptr)
+        _server_instance->StartListening();
 }
 void MainWindow::StopListening(){
-    if(_serverInstance!=nullptr)
-        _serverInstance->StopListening();
+    if(_server_instance!=nullptr)
+        _server_instance->StopListening();
 }

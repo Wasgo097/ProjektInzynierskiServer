@@ -17,7 +17,7 @@ ServerInstance *ServerInstance::GetInstance(){
     if(Instance!=nullptr)
         return Instance;
     else
-        return Instance;
+        return nullptr;
 }
 void ServerInstance::ClearInstance(){
     if(Instance!=nullptr){
@@ -49,11 +49,11 @@ void ServerInstance::StopListening(){
         _listener.reset();
     }
 }
-void ServerInstance::SetConditions(Conditions src){
+void ServerInstance::SetConditions(Condition src){
     _current_conditions.Resourc_mtx.lock();
     _current_conditions.Resource=src;
     _current_conditions.Resourc_mtx.unlock();
 }
-Conditions ServerInstance::GetConditions() const{
+Condition ServerInstance::GetConditions() const{
    return _current_conditions.Resource;
 }

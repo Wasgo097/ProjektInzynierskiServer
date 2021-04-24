@@ -12,6 +12,7 @@ SOURCES += \
     dbmanager.cpp \
     main.cpp \
     mainwindow.cpp \
+    measurements.cpp \
     serverinstance.cpp \
     udplistener.cpp
 
@@ -19,6 +20,7 @@ HEADERS += \
     Global.h \
     dbmanager.h \
     mainwindow.h \
+    measurements.h \
     serverinstance.h \
     udplistener.h
 
