@@ -15,8 +15,8 @@ public:
     static Measurements * GetInstance();
     static void ClearInstance();
 public:
-    std::shared_ptr<Measurement> Get();
-    void Pop();
+    std::shared_ptr<Measurement> Pop();
+    //void Pop();
     void Push(std::shared_ptr<Measurement> Item);
     static int GetBufferSize();
 protected:

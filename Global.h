@@ -3,7 +3,7 @@
 
 #define GLOBAL_DEBUG
 #define ADV_LISTENER
-#define MEAS_DEBUG
+//#define MEAS_DEBUG
 
 #include <mutex>
 #include <memory>

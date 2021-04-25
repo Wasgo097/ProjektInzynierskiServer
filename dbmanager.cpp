@@ -30,8 +30,7 @@ void DBManager::Quit(){
 }
 void DBManager::run(){
     while(_can_run){
-        auto measurement=_measurements->Get();
-        _measurements->Pop();
+        auto measurement=_measurements->Pop();
         auto string=measurement->GetMeasurement();
 #ifdef GLOBAL_DEBUG
         qDebug()<<string;
