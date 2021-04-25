@@ -6,6 +6,7 @@
 #include <QDateTime>
 #include <QDebug>
 class MainWindow;
+class Measurements;
 class UdpListener : public QThread{
     Q_OBJECT
 public:
@@ -17,8 +18,9 @@ public slots:
 protected:
     void run()override{}
 private:
-    MainWindow * _window;
+    MainWindow * _window=nullptr;
     QUdpSocket _socket;
     const quint16 PORT=7654;
+    Measurements * _measurements=nullptr;
 };
 #endif // UDPLISTENER_H

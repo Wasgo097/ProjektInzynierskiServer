@@ -12,7 +12,8 @@ Measurements *Measurements::GetInstance(){
         return Instance;
     }
     else{
-        return nullptr;
+        Instance=new Measurements();
+        return Instance;
     }
 }
 void Measurements::ClearInstance(){
@@ -21,6 +22,36 @@ void Measurements::ClearInstance(){
         Instance=nullptr;
     }
 }
+std::shared_ptr<Measurement> Measurements::Get(){
+    std::unique_lock<std::mutex> mlock(_mtx);
+    while (_queue.empty()) {
+         _cv.wait(mlock);
+    }
+    auto Item=_queue.front();
+    mlock.unlock();
+    _cv.notify_one();
+    return Item;
+}
+void Measurements::Pop(){
+    std::unique_lock<std::mutex> mlock(_mtx);
+    while (_queue.empty()) {
+         _cv.wait(mlock);
+    }
+    _queue.pop();
+    mlock.unlock();
+    _cv.notify_one();
+}
+void Measurements::Push(std::shared_ptr<Measurement> Item){
+    std::unique_lock<std::mutex> mlock(_mtx);
+    while (_queue.size()>=100) {
+         _cv.wait(mlock);
+    }
+    _queue.push(Item);
+    mlock.unlock();
+    _cv.notify_one();
+}
+int Measurements::GetBufferSize(){
+    return BUFFER_SIZE;
+}
 Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
-
 }

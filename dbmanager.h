@@ -5,6 +5,7 @@
 #include <QtSql>
 #include <QSqlDatabase>
 class MainWindow;
+class Measurements;
 class DBManager : public QThread{
     Q_OBJECT
 public:
@@ -15,5 +16,6 @@ protected:
     bool ConnectDB();
 private:
     QSqlDatabase _db;
+    Measurements * _measurements=nullptr;
 };
 #endif // DBMANAGER_H

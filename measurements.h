@@ -13,9 +13,16 @@ public:
     static Measurements * GetInstance(ServerInstance *ServInst);
     static Measurements * GetInstance();
     static void ClearInstance();
+public:
+    std::shared_ptr<Measurement> Get();
+    void Pop();
+    void Push(std::shared_ptr<Measurement> Item);
+    static int GetBufferSize();
 protected:
     Measurements(ServerInstance * ServInst);
+    Measurements()=default;
     static Measurements * Instance;
+    static const int BUFFER_SIZE=100;
 private:
     ServerInstance * _server_instance;
     std::queue<std::shared_ptr<Measurement>> _queue;

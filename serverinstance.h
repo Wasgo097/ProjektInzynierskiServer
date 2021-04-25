@@ -24,6 +24,5 @@ private:
     std::shared_ptr<UdpListener> _listener;
     std::shared_ptr<DBManager> _dbManager;
     ThreadingResourcesLight<Condition> _current_conditions;
-    //ThreadingResourcesLight<std::queue<Measurement>> _measurements;
 };
 #endif // SERVERINSTANCE_H

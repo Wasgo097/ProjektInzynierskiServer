@@ -1,11 +1,13 @@
 #include "dbmanager.h"
 #include "mainwindow.h"
+#include "measurements.h"
 #include "Global.h"
 DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
     if(ConnectDB()){
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Connecting successfully";
 #endif
+        _measurements=Measurements::GetInstance();
     }
     else{
 #ifdef GLOBAL_DEBUG

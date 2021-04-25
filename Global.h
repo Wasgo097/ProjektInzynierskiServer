@@ -17,37 +17,38 @@ struct ThreadingResourcesLight{
     std::mutex Resourc_mtx;
 };
 struct Condition{
-    int Humidity=-1;
     int Temperature=-1;
+    int Humidity=-1;
     QString ToQStr()const{
         return QString::number(Temperature)+"|"+QString::number(Humidity);
     }
+    Condition(int Temp,int Hum):Temperature{Temp},Humidity{Hum}{}
+    Condition()=default;
 };
 class Measurement{
 protected:
-    Measurement(QString Id):_deviceID{Id}{}
+    Measurement(int Id):_deviceID{Id}{}
 protected:
-    QString _deviceID;
+    int _deviceID;
 public:
     virtual QString GetMeasurement()const=0;
 };
 class MeasurementSlave:public Measurement{
 protected:
-    QString _data;
+    int _data;
 public:
-    MeasurementSlave(QString Id,QString Data):Measurement{Id},_data{Data}{}
+    MeasurementSlave(int Id,int Data):Measurement{Id},_data{Data}{}
     virtual QString GetMeasurement()const override{
-        return _deviceID+"|"+_data;
+        return QString::number(_deviceID)+"|"+QString::number(_data);
     }
 };
 class MeasurementMaster:public Measurement{
 protected:
     Condition _condition;
 public:
-    MeasurementMaster(QString Id,Condition Condition):Measurement{Id},_condition{Condition}{}
+    MeasurementMaster(int Id,Condition Condition):Measurement{Id},_condition{Condition}{}
     virtual QString GetMeasurement()const override{
-        return _deviceID+"|"+_condition.ToQStr();
+        return QString::number(_deviceID)+"|"+_condition.ToQStr();
     }
 };
-
 #endif // GLOBAL_H
