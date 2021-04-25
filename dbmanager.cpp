@@ -1,6 +1,7 @@
 #include "dbmanager.h"
 #include "mainwindow.h"
 #include "measurements.h"
+#include "serverinstance.h"
 #include "Global.h"
 DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
     if(ConnectDB()){
@@ -30,7 +31,6 @@ void DBManager::Quit(){
 void DBManager::run(){
     while(_can_run){
         auto measurement=_measurements->Get();
-        QThread::sleep(40);
         _measurements->Pop();
         auto string=measurement->GetMeasurement();
 #ifdef GLOBAL_DEBUG

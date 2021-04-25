@@ -2,7 +2,8 @@
 #define GLOBAL_H
 
 #define GLOBAL_DEBUG
-//#define ADV_LISTENER
+#define ADV_LISTENER
+#define MEAS_DEBUG
 
 #include <mutex>
 #include <memory>
@@ -42,7 +43,7 @@ protected:
 public:
     MeasurementSlave(int Id,QDateTime Time,int Data):Measurement{Id,Time},_data{Data}{}
     virtual QString GetMeasurement()const override{
-        return QString::number(_deviceID)+"|"+QString::number(_data);
+        return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data);
     }
 };
 class MeasurementMaster:public Measurement{
@@ -51,7 +52,7 @@ protected:
 public:
     MeasurementMaster(int Id,QDateTime Time,Condition Condition):Measurement{Id,Time},_condition{Condition}{}
     virtual QString GetMeasurement()const override{
-        return QString::number(_deviceID)+"|"+_condition.ToQStr();
+        return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+_condition.ToQStr();
     }
 };
 #endif // GLOBAL_H

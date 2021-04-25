@@ -23,52 +23,53 @@ void Measurements::ClearInstance(){
         Instance=nullptr;
     }
 }
-std::shared_ptr<Measurement> Measurements::Get(){
+std::shared_ptr<Measurement> Measurements::Pop(){
     std::unique_lock<std::mutex> mlock(_mtx);
     while (_buffer.empty()) {
-#ifdef GLOBAL_DEBUG
-        qDebug()<<"get wait";
-#endif
-         _cv.wait(mlock);
-    }
-#ifdef GLOBAL_DEBUG
-    qDebug()<<"get return";
-#endif
-    auto Item=_buffer.front();
-    mlock.unlock();
-    _cv.notify_one();
-    return Item;
-}
-void Measurements::Pop(){
-    std::unique_lock<std::mutex> mlock(_mtx);
-    while (_buffer.empty()) {
-#ifdef GLOBAL_DEBUG
+#ifdef MEAS_DEBUG
         qDebug()<<"pop wait";
 #endif
          _cv.wait(mlock);
     }
-#ifdef GLOBAL_DEBUG
-    qDebug()<<"pop remove";
+#ifdef MEAS_DEBUG
+    qDebug()<<"get go!";
 #endif
+    auto Item=_buffer.front();
     _buffer.pop();
     mlock.unlock();
-    _cv.notify_one();
+    _cv.notify_all();
+    return Item;
 }
+//void Measurements::Pop(){
+//    std::unique_lock<std::mutex> mlock(_mtx);
+//    while (_buffer.empty()) {
+//#ifdef MEAS_DEBUG
+//        qDebug()<<"pop wait";
+//#endif
+//         _cv.wait(mlock);
+//    }
+//#ifdef MEAS_DEBUG
+//    qDebug()<<"pop remove";
+//#endif
+//    _buffer.pop();
+//    mlock.unlock();
+//    _cv.notify_all();
+//}
 void Measurements::Push(std::shared_ptr<Measurement> Item){
     std::unique_lock<std::mutex> mlock(_mtx);
     while (_buffer.size()>=100) {
-#ifdef GLOBAL_DEBUG
+#ifdef MEAS_DEBUG
         qDebug()<<"push wait";
 #endif
          _cv.wait(mlock);
     }
-#ifdef GLOBAL_DEBUG
-    qDebug()<<"push add";
+#ifdef MEAS_DEBUG
+    qDebug()<<"push go";
 #endif
     _buffer.push(Item);
     _current_measurements.push_back(Item);
     mlock.unlock();
-    _cv.notify_one();
+    _cv.notify_all();
 }
 int Measurements::GetBufferSize(){
     return BUFFER_SIZE;

@@ -1,6 +1,7 @@
 #include "udplistener.h"
 #include "mainwindow.h"
 #include "measurements.h"
+#include "serverinstance.h"
 #include "Global.h"
 #include <QDateTime>
 UdpListener::UdpListener(MainWindow * Parent):QThread{Parent}{
@@ -21,19 +22,12 @@ UdpListener::~UdpListener(){
     _socket.close();
     disconnect(&_socket,&QUdpSocket::readyRead,this,&UdpListener::ReadyRead);
 }
-//void UdpListener::Quit(){
-//#ifdef GLOBAL_DEBUG
-//    qDebug()<<"Close socket";
-//#endif
-//    _socket.close();
-//    QThread::quit();
-//}
 void UdpListener::ReadyRead(){
     QDateTime date=QDateTime::currentDateTime();
     if(_socket.hasPendingDatagrams()){
         QNetworkDatagram datagram=_socket.receiveDatagram();
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"Read: "<<datagram.data()<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date;
+        qDebug()<<"Read: "<<datagram.data()<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date.toString(Qt::DateFormat::ISODate);
 #endif
 #ifdef ADV_LISTENER
         QString line=datagram.data();
@@ -65,6 +59,7 @@ void UdpListener::ReadyRead(){
                     Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
                     std::shared_ptr<Measurement> ptr(mastermeasurement);
                     _measurements->Push(ptr);
+                    ServerInstance::GetInstance()->SetConditions(temp);
                 }
                 else
                     throw;

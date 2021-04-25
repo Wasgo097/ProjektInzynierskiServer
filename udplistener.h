@@ -13,7 +13,6 @@ public:
     explicit UdpListener(MainWindow * Parent=nullptr);
     virtual ~UdpListener();
 public slots:
-    //void Quit();
     void ReadyRead();
 protected:
     void run()override{}

@@ -23,7 +23,7 @@ protected:
     Measurements(ServerInstance * ServInst);
     Measurements()=default;
     static Measurements * Instance;
-    static const int BUFFER_SIZE=100;
+    static const int BUFFER_SIZE=10;
 private:
     ServerInstance * _server_instance=nullptr;
     std::queue<std::shared_ptr<Measurement>> _buffer;
