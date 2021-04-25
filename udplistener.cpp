@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "measurements.h"
 #include "Global.h"
+#include <QDateTime>
 UdpListener::UdpListener(MainWindow * Parent):QThread{Parent}{
     if(!_socket.bind(PORT)){
         qDebug()<<_socket.errorString();
@@ -28,10 +29,13 @@ UdpListener::~UdpListener(){
 //    QThread::quit();
 //}
 void UdpListener::ReadyRead(){
-    QString date=QDateTime::currentDateTime().toString();
+    QDateTime date=QDateTime::currentDateTime();
     if(_socket.hasPendingDatagrams()){
         QNetworkDatagram datagram=_socket.receiveDatagram();
+#ifdef GLOBAL_DEBUG
         qDebug()<<"Read: "<<datagram.data()<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date;
+#endif
+#ifdef ADV_LISTENER
         QString line=datagram.data();
         auto list=line.split('|');
         if(list.size()==2){
@@ -40,7 +44,7 @@ void UdpListener::ReadyRead(){
                 Id=list[0].toInt();
                 Data=list[1].toUInt();
                 if(Id!=-1&&Data!=-1){
-                    Measurement * slavemeasurement=new MeasurementSlave(Id,Data);
+                    Measurement * slavemeasurement=new MeasurementSlave(Id,date, Data);
                     std::shared_ptr<Measurement> ptr(slavemeasurement);
                     _measurements->Push(ptr);
                 }
@@ -56,9 +60,14 @@ void UdpListener::ReadyRead(){
                 Id=list[0].toInt();
                 Temperature=list[1].toInt();
                 Humidity=list[2].toInt();
-                Measurement * mastermeasurement=new MeasurementMaster(Id,Condition(Temperature,Humidity));
-                std::shared_ptr<Measurement> ptr(mastermeasurement);
-                _measurements->Push(ptr);
+                if(Id!=-1&&Temperature!=-1&&Humidity!=-1){
+                    Condition temp(Temperature,Humidity);
+                    Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
+                    std::shared_ptr<Measurement> ptr(mastermeasurement);
+                    _measurements->Push(ptr);
+                }
+                else
+                    throw;
             }  catch (...) {
                 qDebug()<<"Error with convert qstring to int(master)";
             }
@@ -66,5 +75,6 @@ void UdpListener::ReadyRead(){
         else{
             qDebug()<<"Server read invalid data";
         }
+#endif
     }
 }

@@ -16,7 +16,9 @@ private:
     Ui::MainWindow *ui=nullptr;
     ServerInstance *_server_instance=nullptr;
 private:
-    void StartListening();
-    void StopListening();
+    void StartListener();
+    void StopListener();
+    void StarManager();
+    void StopManager();
 };
 #endif // MAINWINDOW_H

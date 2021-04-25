@@ -11,11 +11,13 @@ class DBManager : public QThread{
 public:
     explicit DBManager(MainWindow * Parent=nullptr);
     virtual ~DBManager();
+    void Quit();
 protected:
-    void run()override{}
+    void run()override;
     bool ConnectDB();
 private:
     QSqlDatabase _db;
     Measurements * _measurements=nullptr;
+    bool _can_run=true;
 };
 #endif // DBMANAGER_H

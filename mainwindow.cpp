@@ -5,17 +5,27 @@
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
     _server_instance=ServerInstance::GetInstance(this);
-    StartListening();
+    StartListener();
+    StarManager();
 }
 MainWindow::~MainWindow(){
-    StopListening();
+    StopListener();
+    StopManager();
     delete ui;
 }
-void MainWindow::StartListening(){
+void MainWindow::StartListener(){
     if(_server_instance!=nullptr)
-        _server_instance->StartListening();
+        _server_instance->StartListener();
 }
-void MainWindow::StopListening(){
+void MainWindow::StopListener(){
     if(_server_instance!=nullptr)
-        _server_instance->StopListening();
+        _server_instance->StopListener();
+}
+void MainWindow::StarManager(){
+    if(_server_instance!=nullptr)
+        _server_instance->StartDatabase();
+}
+void MainWindow::StopManager(){
+    if(_server_instance!=nullptr)
+        _server_instance->StopDatabase();
 }

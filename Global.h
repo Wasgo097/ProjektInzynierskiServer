@@ -2,10 +2,12 @@
 #define GLOBAL_H
 
 #define GLOBAL_DEBUG
+//#define ADV_LISTENER
 
 #include <mutex>
 #include <memory>
 #include <QString>
+#include <QDateTime>
 template <class T>
 struct ThreadingResources{
     std::shared_ptr<T> Resource;
@@ -27,9 +29,10 @@ struct Condition{
 };
 class Measurement{
 protected:
-    Measurement(int Id):_deviceID{Id}{}
+    Measurement(int Id,QDateTime Time):_deviceID{Id},_time{Time}{}
 protected:
     int _deviceID;
+    QDateTime _time;
 public:
     virtual QString GetMeasurement()const=0;
 };
@@ -37,7 +40,7 @@ class MeasurementSlave:public Measurement{
 protected:
     int _data;
 public:
-    MeasurementSlave(int Id,int Data):Measurement{Id},_data{Data}{}
+    MeasurementSlave(int Id,QDateTime Time,int Data):Measurement{Id,Time},_data{Data}{}
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+QString::number(_data);
     }
@@ -46,7 +49,7 @@ class MeasurementMaster:public Measurement{
 protected:
     Condition _condition;
 public:
-    MeasurementMaster(int Id,Condition Condition):Measurement{Id},_condition{Condition}{}
+    MeasurementMaster(int Id,QDateTime Time,Condition Condition):Measurement{Id,Time},_condition{Condition}{}
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+_condition.ToQStr();
     }

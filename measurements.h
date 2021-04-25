@@ -1,6 +1,7 @@
 #ifndef MEASUREMENTS_H
 #define MEASUREMENTS_H
 #include <queue>
+#include <list>
 #include <mutex>
 #include <condition_variable>
 #include <memory>
@@ -24,8 +25,9 @@ protected:
     static Measurements * Instance;
     static const int BUFFER_SIZE=100;
 private:
-    ServerInstance * _server_instance;
-    std::queue<std::shared_ptr<Measurement>> _queue;
+    ServerInstance * _server_instance=nullptr;
+    std::queue<std::shared_ptr<Measurement>> _buffer;
+    std::list<std::shared_ptr<Measurement>> _current_measurements;
     std::mutex _mtx;
     std::condition_variable _cv;
 };

@@ -12,8 +12,10 @@ public:
     static ServerInstance *GetInstance(MainWindow * Window);
     static ServerInstance *GetInstance();
     static void ClearInstance();
-    void StartListening();
-    void StopListening();
+    void StartListener();
+    void StopListener();
+    void StartDatabase();
+    void StopDatabase();
     void SetConditions(Condition src);
     Condition GetConditions()const;
 protected:

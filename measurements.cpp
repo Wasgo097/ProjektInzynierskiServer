@@ -1,5 +1,6 @@
 #include "measurements.h"
 #include "serverinstance.h"
+#include <QDebug>
 Measurements * Measurements::Instance=nullptr;
 Measurements *Measurements::GetInstance(ServerInstance* ServInst){
     if(Instance==nullptr){
@@ -24,29 +25,48 @@ void Measurements::ClearInstance(){
 }
 std::shared_ptr<Measurement> Measurements::Get(){
     std::unique_lock<std::mutex> mlock(_mtx);
-    while (_queue.empty()) {
+    while (_buffer.empty()) {
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"get wait";
+#endif
          _cv.wait(mlock);
     }
-    auto Item=_queue.front();
+#ifdef GLOBAL_DEBUG
+    qDebug()<<"get return";
+#endif
+    auto Item=_buffer.front();
     mlock.unlock();
     _cv.notify_one();
     return Item;
 }
 void Measurements::Pop(){
     std::unique_lock<std::mutex> mlock(_mtx);
-    while (_queue.empty()) {
+    while (_buffer.empty()) {
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"pop wait";
+#endif
          _cv.wait(mlock);
     }
-    _queue.pop();
+#ifdef GLOBAL_DEBUG
+    qDebug()<<"pop remove";
+#endif
+    _buffer.pop();
     mlock.unlock();
     _cv.notify_one();
 }
 void Measurements::Push(std::shared_ptr<Measurement> Item){
     std::unique_lock<std::mutex> mlock(_mtx);
-    while (_queue.size()>=100) {
+    while (_buffer.size()>=100) {
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"push wait";
+#endif
          _cv.wait(mlock);
     }
-    _queue.push(Item);
+#ifdef GLOBAL_DEBUG
+    qDebug()<<"push add";
+#endif
+    _buffer.push(Item);
+    _current_measurements.push_back(Item);
     mlock.unlock();
     _cv.notify_one();
 }

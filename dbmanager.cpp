@@ -4,25 +4,41 @@
 #include "Global.h"
 DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
     if(ConnectDB()){
-#ifdef GLOBAL_DEBUG
         qDebug()<<"Connecting successfully";
-#endif
         _measurements=Measurements::GetInstance();
     }
     else{
-#ifdef GLOBAL_DEBUG
         qDebug()<<"Connecting unsuccessfully, end thread";
-#endif
         this->exit(-1);
         this->deleteLater();
     }
 }
 DBManager::~DBManager(){
-#ifdef GLOBAL_DEBUG
     qDebug()<<"~DBManager";
-#endif
     if(_db.isOpen()){
         _db.close();
+    }
+}
+void DBManager::Quit(){
+    _can_run=false;
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Manager quit";
+#endif
+    terminate();
+    quit();
+}
+void DBManager::run(){
+    while(_can_run){
+        auto measurement=_measurements->Get();
+        QThread::sleep(40);
+        _measurements->Pop();
+        auto string=measurement->GetMeasurement();
+#ifdef GLOBAL_DEBUG
+        qDebug()<<string;
+#endif
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Manager runing loop";
+#endif
     }
 }
 bool DBManager::ConnectDB(){

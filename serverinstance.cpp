@@ -25,7 +25,7 @@ void ServerInstance::ClearInstance(){
         Instance=nullptr;
     }
 }
-void ServerInstance::StartListening(){
+void ServerInstance::StartListener(){
     if(_listener){
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Start existing listener";
@@ -40,13 +40,37 @@ void ServerInstance::StartListening(){
         _listener->start();
     }
 }
-void ServerInstance::StopListening(){
+void ServerInstance::StopListener(){
     if(_listener){
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Stop existing listener";
 #endif
         _listener->quit();
         _listener.reset();
+    }
+}
+void ServerInstance::StartDatabase(){
+    if(_dbManager){
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Start existing db manager";
+#endif
+        _dbManager->start();
+    }
+    else{
+    #ifdef GLOBAL_DEBUG
+            qDebug()<<"Start new db manager";
+    #endif
+        _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
+        _dbManager->start();
+    }
+}
+void ServerInstance::StopDatabase(){
+    if(_dbManager){
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Stop existing db manager";
+#endif
+        _dbManager->Quit();
+        _dbManager.reset();
     }
 }
 void ServerInstance::SetConditions(Condition src){
