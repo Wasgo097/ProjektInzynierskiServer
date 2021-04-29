@@ -6,8 +6,11 @@
 #include <QSqlQuery>
 #include <QPluginLoader>
 #include <QVariant>
-DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
-    if(ConnectDB()){
+DBManager::DBManager(MainWindow * Parent):QThread{Parent}{    
+    _db=QSqlDatabase::addDatabase("QSQLITE");
+    //_db.setDatabaseName("Database.db");
+    _db.setDatabaseName("DatabaseCopy.db");
+    if(_db.open()){
         qDebug()<<"Connecting successfully";
         _measurements=Measurements::GetInstance();
     }
@@ -33,7 +36,7 @@ void DBManager::Quit(){
 }
 void DBManager::run(){
     ServerInstance * server=ServerInstance::GetInstance();
-    while(_can_run){
+    while(_db.isOpen()){
         auto measurement=_measurements->Pop();
         auto string=measurement->GetMeasurement();
         auto listfrommeasurement=string.split('|');
@@ -44,17 +47,17 @@ void DBManager::run(){
         list.append(listfrommeasurement[2]);
         list.append(listfromcondition[0]);
         list.append(listfromcondition[1]);
-#ifdef GLOBAL_DEBUG
+#ifdef MANA_DEBUG
         qDebug()<<string;
 #endif
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Manager runing loop";
 #endif
 #ifdef ADV_MANAGER
-        QSqlQuery query;
         QString cmd;
         cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+list[0]+","+list[1]+","+list[2]+","+list[3]+","+list[4]+");";
-        if(_db.exec(cmd).exec()){
+        QSqlQuery query(cmd,_db);
+        if(query.exec()){
 #ifdef MANA_DEBUG
             qDebug()<<"Data added to db";
 #endif
@@ -65,9 +68,5 @@ void DBManager::run(){
         }
 #endif
     }
-}
-bool DBManager::ConnectDB(){
-    _db=QSqlDatabase::addDatabase("QSQLITE","DatabaseCopy.db");
-    //_db.setDatabaseName("Database.db");
-    return _db.open();
+    qDebug()<<"DB closed";
 }

@@ -14,7 +14,6 @@ public:
     void Quit();
 protected:
     void run()override;
-    bool ConnectDB();
 private:
     QSqlDatabase _db;
     Measurements * _measurements=nullptr;
