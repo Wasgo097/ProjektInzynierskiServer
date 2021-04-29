@@ -24,14 +24,13 @@ void DBManager::Quit(){
 }
 void DBManager::run(){
     _db=QSqlDatabase::addDatabase("QSQLITE");
-    //_db.setDatabaseName("Database.db");
     _db.setDatabaseName("DatabaseCopy.db");
     if(_db.open()){
-        qDebug()<<"Connecting successfully";
+        qDebug()<<"DB Manager connecting successfully";
         _measurements=Measurements::GetInstance();
     }
     else{
-        qDebug()<<"Connecting unsuccessfully, end thread";
+        qDebug()<<"DB Manager connecting unsuccessfully, end thread";
         this->exit(-1);
         this->deleteLater();
     }

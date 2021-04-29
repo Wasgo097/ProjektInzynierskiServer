@@ -18,6 +18,5 @@ protected:
     QSqlDatabase _db;
 private:
     Measurements * _measurements=nullptr;
-    //bool _can_run=true;
 };
 #endif // DBMANAGER_H
