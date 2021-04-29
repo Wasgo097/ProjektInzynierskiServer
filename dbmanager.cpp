@@ -6,7 +6,23 @@
 #include <QSqlQuery>
 #include <QPluginLoader>
 #include <QVariant>
-DBManager::DBManager(MainWindow * Parent):QThread{Parent}{    
+DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
+}
+DBManager::~DBManager(){
+    qDebug()<<"~DBManager";
+    if(_db.isOpen()){
+        _db.close();
+    }
+}
+void DBManager::Quit(){
+    //_can_run=false;
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Manager quit";
+#endif
+    terminate();
+    quit();
+}
+void DBManager::run(){
     _db=QSqlDatabase::addDatabase("QSQLITE");
     //_db.setDatabaseName("Database.db");
     _db.setDatabaseName("DatabaseCopy.db");
@@ -19,22 +35,6 @@ DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
         this->exit(-1);
         this->deleteLater();
     }
-}
-DBManager::~DBManager(){
-    qDebug()<<"~DBManager";
-    if(_db.isOpen()){
-        _db.close();
-    }
-}
-void DBManager::Quit(){
-    _can_run=false;
-#ifdef GLOBAL_DEBUG
-        qDebug()<<"Manager quit";
-#endif
-    terminate();
-    quit();
-}
-void DBManager::run(){
     ServerInstance * server=ServerInstance::GetInstance();
     while(_db.isOpen()){
         auto measurement=_measurements->Pop();
@@ -47,26 +47,28 @@ void DBManager::run(){
         list.append(listfrommeasurement[2]);
         list.append(listfromcondition[0]);
         list.append(listfromcondition[1]);
-#ifdef MANA_DEBUG
-        qDebug()<<string;
-#endif
 #ifdef GLOBAL_DEBUG
+        qDebug()<<"DB Manager get "<<string;
+#endif
+#ifdef MANA_DEBUG
         qDebug()<<"Manager runing loop";
 #endif
 #ifdef ADV_MANAGER
         QString cmd;
-        cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+list[0]+","+list[1]+","+list[2]+","+list[3]+","+list[4]+");";
-        QSqlQuery query(cmd,_db);
-        if(query.exec()){
+        cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+list[0]+",'"+list[1]+"',"+list[2]+","+list[3]+","+list[4]+");";
+        QSqlQuery query;
+        if(query.exec(cmd)){
 #ifdef MANA_DEBUG
             qDebug()<<"Data added to db";
 #endif
         }
         else{
-            qDebug()<<"Error in exec query";
-            qDebug()<<_db.lastError().text()<<"\n"<<query.lastError().text();
+            qDebug()<<"ERROR WITH QUERY";
+            qDebug()<<_db.lastError().text()<<"\t"<<query.lastError().text();
         }
 #endif
     }
+#ifdef MANA_DEBUG
     qDebug()<<"DB closed";
+#endif
 }

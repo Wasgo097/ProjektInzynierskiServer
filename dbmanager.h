@@ -14,9 +14,10 @@ public:
     void Quit();
 protected:
     void run()override;
-private:
+protected:
     QSqlDatabase _db;
+private:
     Measurements * _measurements=nullptr;
-    bool _can_run=true;
+    //bool _can_run=true;
 };
 #endif // DBMANAGER_H

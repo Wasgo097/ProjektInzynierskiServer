@@ -27,7 +27,7 @@ void UdpListener::ReadyRead(){
     if(_socket.hasPendingDatagrams()){
         QNetworkDatagram datagram=_socket.receiveDatagram();
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"Read: "<<datagram.data()<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date.toString(Qt::DateFormat::ISODate);
+        qDebug()<<"LISTENER READ: "<<datagram.data()<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date.toString(Qt::DateFormat::ISODate);
 #endif
 #ifdef ADV_LISTENER
         QString line=datagram.data();

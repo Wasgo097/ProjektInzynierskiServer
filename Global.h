@@ -3,9 +3,9 @@
 
 #define GLOBAL_DEBUG
 #define ADV_LISTENER
-//#define ADV_MANAGER
+#define ADV_MANAGER
 //#define MEAS_DEBUG
-//#define MANA_DEBUG
+#define MANA_DEBUG
 
 #include <mutex>
 #include <memory>
