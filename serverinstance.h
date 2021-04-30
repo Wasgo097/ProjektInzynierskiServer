@@ -4,6 +4,7 @@
 #include "Global.h"
 class UdpListener;
 class DBManager;
+class SerialListener;
 class MainWindow;
 class ServerInstance{
 public:
@@ -12,8 +13,8 @@ public:
     static ServerInstance *GetInstance(MainWindow * Window);
     static ServerInstance *GetInstance();
     static void ClearInstance();
-    void StartListener();
-    void StopListener();
+    void StartListeners();
+    void StopListeners();
     void StartDatabase();
     void StopDatabase();
     void SetConditions(Condition src);
@@ -23,7 +24,8 @@ protected:
     static ServerInstance * Instance;
 private:
     MainWindow * _window;
-    std::shared_ptr<UdpListener> _listener;
+    std::shared_ptr<UdpListener> _udplistener;
+    std::shared_ptr<SerialListener> _seriallistener;
     std::shared_ptr<DBManager> _dbManager;
     ThreadingResourcesLight<Condition> _current_conditions;
 };

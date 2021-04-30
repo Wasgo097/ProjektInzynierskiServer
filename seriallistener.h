@@ -1,13 +1,22 @@
 #ifndef SERIALLISTENER_H
 #define SERIALLISTENER_H
-
 #include <QThread>
-
-class SerialListener : public QThread
-{
+#include <QSerialPort>
+#include <QDebug>
+class MainWindow;
+class Measurements;
+class SerialListener : public QThread{
     Q_OBJECT
 public:
-    SerialListener();
+    SerialListener(MainWindow * Parent=nullptr);
+    virtual ~SerialListener();
+protected:
+    void run()override{}
+protected slots:
+    void SerialReceived();
+private:
+    QSerialPort _serial;
+    Measurements * _measurements=nullptr;
 };
 
 #endif // SERIALLISTENER_H

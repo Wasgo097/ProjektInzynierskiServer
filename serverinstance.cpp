@@ -1,10 +1,12 @@
 #include "serverinstance.h"
 #include "mainwindow.h"
 #include "udplistener.h"
+#include "seriallistener.h"
 #include "dbmanager.h"
 ServerInstance * ServerInstance::Instance=nullptr;
 ServerInstance::ServerInstance(MainWindow *Window):_window{Window}{
-    _listener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+    _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+    _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window));
     _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
 }
 ServerInstance *ServerInstance::GetInstance(MainWindow *Window){
@@ -25,28 +27,48 @@ void ServerInstance::ClearInstance(){
         Instance=nullptr;
     }
 }
-void ServerInstance::StartListener(){
-    if(_listener){
+void ServerInstance::StartListeners(){
+    if(_udplistener){
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"Start existing listener";
+        qDebug()<<"Start existing udplistener";
 #endif
-        _listener->start();
+        _udplistener->start();
     }
     else{
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"Start new listener";
+        qDebug()<<"Start new udplistener";
 #endif
-        _listener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
-        _listener->start();
+        _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+        _udplistener->start();
+    }
+    if(_seriallistener){
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Start existing seriallistener";
+#endif
+        _seriallistener->start();
+    }
+    else{
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Start new seriallistener";
+#endif
+        _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window));
+        _seriallistener->start();
     }
 }
-void ServerInstance::StopListener(){
-    if(_listener){
+void ServerInstance::StopListeners(){
+    if(_udplistener){
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"Stop existing listener";
+        qDebug()<<"Stop existing udplistener";
 #endif
-        _listener->quit();
-        _listener.reset();
+        _udplistener->quit();
+        _udplistener.reset();
+    }
+    if(_seriallistener){
+#ifdef GLOBAL_DEBUG
+        qDebug()<<"Stop existing seriallistener";
+#endif
+        //_seriallistener->quit();
+        //_seriallistener.reset();
     }
 }
 void ServerInstance::StartDatabase(){

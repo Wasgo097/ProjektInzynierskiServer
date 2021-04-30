@@ -15,11 +15,11 @@ MainWindow::~MainWindow(){
 }
 void MainWindow::StartListener(){
     if(_server_instance!=nullptr)
-        _server_instance->StartListener();
+        _server_instance->StartListeners();
 }
 void MainWindow::StopListener(){
     if(_server_instance!=nullptr)
-        _server_instance->StopListener();
+        _server_instance->StopListeners();
 }
 void MainWindow::StarManager(){
     if(_server_instance!=nullptr)

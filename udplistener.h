@@ -12,12 +12,11 @@ class UdpListener : public QThread{
 public:
     explicit UdpListener(MainWindow * Parent=nullptr);
     virtual ~UdpListener();
-public slots:
+protected slots:
     void ReadyRead();
 protected:
     void run()override{}
 private:
-    MainWindow * _window=nullptr;
     QUdpSocket _socket;
     const quint16 PORT=7654;
     Measurements * _measurements=nullptr;
