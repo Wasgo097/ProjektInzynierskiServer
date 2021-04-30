@@ -13,6 +13,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     measurements.cpp \
+    seriallistener.cpp \
     serverinstance.cpp \
     udplistener.cpp
 
@@ -21,6 +22,7 @@ HEADERS += \
     dbmanager.h \
     mainwindow.h \
     measurements.h \
+    seriallistener.h \
     serverinstance.h \
     udplistener.h
 
