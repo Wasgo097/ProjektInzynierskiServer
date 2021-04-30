@@ -6,6 +6,7 @@
 #define ADV_MANAGER
 //#define MEAS_DEBUG
 //#define MANA_DEBUG
+#define DBTEST
 
 #include <mutex>
 #include <memory>

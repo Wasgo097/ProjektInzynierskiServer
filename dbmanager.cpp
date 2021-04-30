@@ -24,7 +24,12 @@ void DBManager::Quit(){
 }
 void DBManager::run(){
     _db=QSqlDatabase::addDatabase("QSQLITE");
+#ifdef DBTEST
     _db.setDatabaseName("DatabaseCopy.db");
+#else
+    _db.setDatabaseName("Database.db");
+#endif
+
     if(_db.open()){
         qDebug()<<"DB Manager connecting successfully";
         _measurements=Measurements::GetInstance();
