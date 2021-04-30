@@ -3,7 +3,7 @@
 #include "measurements.h"
 #include "serverinstance.h"
 SerialListener::SerialListener(MainWindow *Parent):QThread{Parent}{
-    _serial.setPortName("COM9");
+    _serial.setPortName("com9");
     _serial.setBaudRate(QSerialPort::Baud9600);
     _serial.setDataBits(QSerialPort::Data8);
     _serial.setParity(QSerialPort::NoParity);
