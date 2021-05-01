@@ -2,6 +2,7 @@
 #define SERIALLISTENER_H
 #include <QThread>
 #include <QSerialPort>
+#include <QByteArray>
 #include <QDebug>
 class MainWindow;
 class Measurements;
@@ -15,7 +16,8 @@ protected:
 protected slots:
     void SerialReceived();
 private:
-    QSerialPort _serial;
+    QSerialPort _serial;    
+    QByteArray _serialbuffer;
     Measurements * _measurements=nullptr;
 };
 

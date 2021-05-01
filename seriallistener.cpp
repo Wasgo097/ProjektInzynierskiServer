@@ -27,8 +27,14 @@ SerialListener::~SerialListener(){
 }
 void SerialListener::SerialReceived(){
     QDateTime date=QDateTime::currentDateTime();
-    if(_serial.canReadLine()){
-        QString line=_serial.readAll();
+    _serialbuffer+=_serial.readAll();
+    if(_serialbuffer.contains(';')){
+        auto templist=_serialbuffer.split(';');
+        QString line="";
+        if(templist.size()>2)
+            line=templist[templist.size()-2];
+        else
+            line=templist[0];
 #ifdef GLOBAL_DEBUG
         qDebug()<<"SERIAL LISTENER READ: "<<line<<" date "<<date.toString(Qt::DateFormat::ISODate);
 #endif

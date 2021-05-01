@@ -3,7 +3,7 @@
 
 #define GLOBAL_DEBUG
 //#define ADV_UDP_LISTENER
-//#define ADV_SERIAL_LISTENER
+#define ADV_SERIAL_LISTENER
 //#define ADV_MANAGER
 //#define MEAS_DEBUG
 //#define MANA_DEBUG

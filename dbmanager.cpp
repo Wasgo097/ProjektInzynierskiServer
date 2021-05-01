@@ -51,11 +51,8 @@ void DBManager::run(){
         list.append(listfrommeasurement[2]);
         list.append(listfromcondition[0]);
         list.append(listfromcondition[1]);
-#ifdef GLOBAL_DEBUG
-        qDebug()<<"DB Manager get "<<string;
-#endif
 #ifdef MANA_DEBUG
-        qDebug()<<"Manager runing loop";
+        qDebug()<<"DB Manager get "<<string;
 #endif
 #ifdef ADV_MANAGER
         QString cmd;
