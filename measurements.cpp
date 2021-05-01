@@ -40,21 +40,6 @@ std::shared_ptr<Measurement> Measurements::Pop(){
     _cv.notify_all();
     return Item;
 }
-//void Measurements::Pop(){
-//    std::unique_lock<std::mutex> mlock(_mtx);
-//    while (_buffer.empty()) {
-//#ifdef MEAS_DEBUG
-//        qDebug()<<"pop wait";
-//#endif
-//         _cv.wait(mlock);
-//    }
-//#ifdef MEAS_DEBUG
-//    qDebug()<<"pop remove";
-//#endif
-//    _buffer.pop();
-//    mlock.unlock();
-//    _cv.notify_all();
-//}
 void Measurements::Push(std::shared_ptr<Measurement> Item){
     std::unique_lock<std::mutex> mlock(_mtx);
     while (_buffer.size()>=100) {

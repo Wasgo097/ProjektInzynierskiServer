@@ -16,8 +16,8 @@ protected:
 protected slots:
     void SerialReceived();
 private:
-    QSerialPort _serial;    
-    QByteArray _serialbuffer;
+    QSerialPort _serial;
+    QByteArray _serial_buffer;
     Measurements * _measurements=nullptr;
 };
 

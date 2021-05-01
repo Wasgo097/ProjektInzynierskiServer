@@ -18,6 +18,7 @@ protected:
     void run()override{}
 private:
     QUdpSocket _socket;
+    QByteArray _udp_buffer;
     const quint16 PORT=7654;
     Measurements * _measurements=nullptr;
 };
