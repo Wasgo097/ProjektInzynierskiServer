@@ -1,5 +1,6 @@
 #ifndef SERIALLISTENER_H
 #define SERIALLISTENER_H
+#include <memory>
 #include <QThread>
 #include <QSerialPort>
 #include <QByteArray>
@@ -11,12 +12,15 @@ class SerialListener : public QThread{
 public:
     SerialListener(MainWindow * Parent=nullptr);
     virtual ~SerialListener();
+    void Quit();
 protected:
     void run()override;
+    void SetSerialParams();
+    bool IsValid();
 protected slots:
     void SerialReceived();
 private:
-    QSerialPort _serial;
+    std::shared_ptr<QSerialPort> _serial;
     QByteArray _serial_buffer;
     Measurements * _measurements=nullptr;
 };

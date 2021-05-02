@@ -67,8 +67,8 @@ void ServerInstance::StopListeners(){
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Stop existing seriallistener";
 #endif
-        //_seriallistener->quit();
-        //_seriallistener.reset();
+        _seriallistener->Quit();
+        _seriallistener.reset();
     }
 }
 void ServerInstance::StartDatabase(){
