@@ -15,7 +15,6 @@ DBManager::~DBManager(){
     }
 }
 void DBManager::Quit(){
-    //_can_run=false;
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Manager quit";
 #endif

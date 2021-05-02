@@ -3,27 +3,51 @@
 #include "measurements.h"
 #include "serverinstance.h"
 SerialListener::SerialListener(MainWindow *Parent):QThread{Parent}{
-    _serial.setPortName("com9");
-    _serial.setBaudRate(QSerialPort::Baud9600);
-    _serial.setDataBits(QSerialPort::Data8);
-    _serial.setParity(QSerialPort::NoParity);
-    _serial.setStopBits(QSerialPort::OneStop);
-    _serial.setFlowControl(QSerialPort::NoFlowControl);
-    if(_serial.open(QIODevice::ReadWrite)){
-        qDebug()<<"Serial Listener opening successfully";
-        _measurements=Measurements::GetInstance();
-        connect(&_serial,&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
-    }
-    else{
-        qDebug()<<"Serial Listener opening unsuccessfully, end thread";
-        this->exit(-1);
-        this->deleteLater();
-    }
+//    _serial.setPortName("com9");
+//    _serial.setBaudRate(QSerialPort::Baud9600);
+//    _serial.setDataBits(QSerialPort::Data8);
+//    _serial.setParity(QSerialPort::NoParity);
+//    _serial.setStopBits(QSerialPort::OneStop);
+//    _serial.setFlowControl(QSerialPort::NoFlowControl);
+//    if(_serial.open(QIODevice::ReadWrite)){
+//        qDebug()<<"Serial Listener opening successfully";
+//        _measurements=Measurements::GetInstance();
+//        connect(&_serial,&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
+//    }
+//    else{
+//        qDebug()<<"Serial Listener opening unsuccessfully, end thread";
+//        this->exit(-1);
+//        this->deleteLater();
+//    }
 }
 SerialListener::~SerialListener(){
     qDebug()<<"~SerialListener";
     _serial.close();
     disconnect(&_serial,&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
+}
+void SerialListener::run(){
+    while(true){
+        while(!_serial.isOpen()){
+            _serial.setPortName("com9");
+            _serial.setBaudRate(QSerialPort::Baud9600);
+            _serial.setDataBits(QSerialPort::Data8);
+            _serial.setParity(QSerialPort::NoParity);
+            _serial.setStopBits(QSerialPort::OneStop);
+            _serial.setFlowControl(QSerialPort::NoFlowControl);
+            if(_serial.open(QIODevice::ReadWrite)){
+                qDebug()<<"Serial Listener opening successfully";
+                _measurements=Measurements::GetInstance();
+                //connect(&_serial,&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
+            }
+            else{
+                //qDebug()<<"Serial closed";
+            }
+        }
+        while(_serial.isOpen()){
+            if(_serial.waitForReadyRead())
+                qDebug()<<_serial.readAll();
+        }
+    }
 }
 void SerialListener::SerialReceived(){
     QDateTime date=QDateTime::currentDateTime();

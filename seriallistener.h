@@ -12,7 +12,7 @@ public:
     SerialListener(MainWindow * Parent=nullptr);
     virtual ~SerialListener();
 protected:
-    void run()override{}
+    void run()override;
 protected slots:
     void SerialReceived();
 private:
