@@ -28,7 +28,6 @@ void DBManager::run(){
 #else
     _db.setDatabaseName("Database.db");
 #endif
-
     if(_db.open()){
         qDebug()<<"DB Manager connecting successfully";
         _measurements=Measurements::GetInstance();
@@ -40,33 +39,51 @@ void DBManager::run(){
     }
     ServerInstance * server=ServerInstance::GetInstance();
     while(_db.isOpen()){
+        QString cmd;
         auto measurement=_measurements->Pop();
-        auto string=measurement->GetMeasurement();
-        auto listfrommeasurement=string.split('|');
-        auto listfromcondition=server->GetConditions().ToQStr().split('|');
-        QStringList list;
-        list.append(listfrommeasurement[0]);
-        list.append(listfrommeasurement[1]);
-        list.append(listfrommeasurement[2]);
-        list.append(listfromcondition[0]);
-        list.append(listfromcondition[1]);
+        auto measurementstring=measurement->GetMeasurement();
+        auto measurementparams=measurementstring.split('|');
+        if(measurement->GetMeasurementType()==MeasuremntType::Slave){
+            Condition conditions=server->GetConditions();
+            if(conditions!=Condition::DefaultCondition()){
+                auto conditionparams=conditions.ToQStr().split('|');
+                //params descriptions in doc
+                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+conditionparams[0]+","+conditionparams[1]+");";
+            }
+            else{
+                //sent measurement to buffer
+                _measurement_buffer.push_front(measurement);
+            }
+        }
+        //buffer service
+        else{
+            for(auto & measurement:_measurement_buffer){
+                auto temp_str=measurement->GetMeasurement();
+                auto temp_params=temp_str.split('|');
+                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+temp_params[0]+",'"+temp_params[1]+"',"+temp_params[2]+","+measurementparams[0]+","+measurementparams[1]+");";
+                QSqlQuery temp_query;
+                if(!temp_query.exec(cmd))
+                    qDebug()<<"Error with buffer "<<temp_query.lastError();
+            }
+            cmd="INSERT INTO Measurements(SensorId,Date,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+measurementparams[3]+");";
+        }
+        if(cmd!=""){
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"DB Manager get "<<string;
+            qDebug()<<"DB Manager query: "<<cmd;
 #endif
 #ifdef ADV_MANAGER
-        QString cmd;
-        cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+list[0]+",'"+list[1]+"',"+list[2]+","+list[3]+","+list[4]+");";
         QSqlQuery query;
-        if(query.exec(cmd)){
-#ifdef MANA_DEBUG
-            qDebug()<<"Data added to db";
+            if(query.exec(cmd)){
+    #ifdef MANA_DEBUG
+                qDebug()<<"Data added to db";
+    #endif
+            }
+            else{
+                qDebug()<<"ERROR WITH QUERY";
+                qDebug()<<_db.lastError().text()<<"\t"<<query.lastError().text();
+            }
 #endif
         }
-        else{
-            qDebug()<<"ERROR WITH QUERY";
-            qDebug()<<_db.lastError().text()<<"\t"<<query.lastError().text();
-        }
-#endif
     }
 #ifdef MANA_DEBUG
     qDebug()<<"DB closed";

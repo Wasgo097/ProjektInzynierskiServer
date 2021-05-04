@@ -2,11 +2,11 @@
 #define GLOBAL_H
 
 #define GLOBAL_DEBUG
-//#define ADV_UDP_LISTENER
-//#define ADV_SERIAL_LISTENER
-//#define ADV_MANAGER
+#define ADV_UDP_LISTENER
+#define ADV_SERIAL_LISTENER
+#define ADV_MANAGER
 //#define MEAS_DEBUG
-//#define MANA_DEBUG
+#define MANA_DEBUG
 #define DBTEST
 
 #include <mutex>
@@ -34,6 +34,19 @@ struct Condition{
     bool Valid(){
         return Temperature!=-1&&Humidity!=-1;
     }
+    bool operator ==(const Condition & arg)const{
+        return this->Temperature==arg.Temperature&&this->Humidity==arg.Humidity;
+    }
+    bool operator !=(const Condition & arg)const{
+        return !(*this==arg);
+    }
+    static Condition DefaultCondition(){
+        return Condition();
+    }
+};
+enum class MeasuremntType{
+    Slave,
+    Master
 };
 class Measurement{
 protected:
@@ -43,6 +56,7 @@ protected:
     QDateTime _time;
 public:
     virtual QString GetMeasurement()const=0;
+    virtual MeasuremntType GetMeasurementType()const=0;
 };
 class MeasurementSlave:public Measurement{
 protected:
@@ -52,6 +66,10 @@ public:
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data);
     }
+public:
+    virtual MeasuremntType GetMeasurementType() const override{
+        return MeasuremntType::Slave;
+    }
 };
 class MeasurementMaster:public Measurement{
 protected:
@@ -60,6 +78,10 @@ public:
     MeasurementMaster(int Id,QDateTime Time,Condition Condition):Measurement{Id,Time},_condition{Condition}{}
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+_condition.ToQStr();
+    }
+public:
+    virtual MeasuremntType GetMeasurementType() const override{
+        return MeasuremntType::Master;
     }
 };
 #endif // GLOBAL_H

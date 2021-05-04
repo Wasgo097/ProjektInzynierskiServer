@@ -121,10 +121,10 @@ void SerialListener::SerialReceived(){
                 Humidity=list[2].toInt();
                 if(Id!=-1&&Temperature!=-1&&Humidity!=-1){
                     Condition temp(Temperature,Humidity);
+                    ServerInstance::GetInstance()->SetConditions(temp);
                     Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
                     std::shared_ptr<Measurement> ptr(mastermeasurement);
                     _measurements->Push(ptr);
-                    ServerInstance::GetInstance()->SetConditions(temp);
                 }
                 else
                     throw;
@@ -133,7 +133,7 @@ void SerialListener::SerialReceived(){
             }
         }
         else{
-            qDebug()<<"Server read invalid data";
+            qDebug()<<"Server read invalid data from serial";
         }
 #endif
     }
