@@ -8,8 +8,8 @@ UdpListener::UdpListener(MainWindow * Parent):QThread{Parent}{
     if(!_socket.bind(PORT)){
         qDebug()<<_socket.errorString();
         qDebug()<<"Listening unsuccessfully, end thread";
-        this->exit(-1);
-        this->deleteLater();
+        this->terminate();
+        //this->deleteLater();
     }
     else{
         qDebug()<<"Started udp on "<<_socket.localAddress()<<" : "<<_socket.localPort();

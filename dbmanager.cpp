@@ -34,8 +34,8 @@ void DBManager::run(){
     }
     else{
         qDebug()<<"DB Manager connecting unsuccessfully, end thread";
-        this->exit(-1);
-        this->deleteLater();
+        this->terminate();
+        //this->deleteLater();
     }
     ServerInstance * server=ServerInstance::GetInstance();
     while(_db.isOpen()){
@@ -58,9 +58,9 @@ void DBManager::run(){
         //buffer service
         else{
             for(auto & measurement:_measurement_buffer){
-                auto temp_str=measurement->GetMeasurement();
-                auto temp_params=temp_str.split('|');
-                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+temp_params[0]+",'"+temp_params[1]+"',"+temp_params[2]+","+measurementparams[0]+","+measurementparams[1]+");";
+                auto measurement_str=measurement->GetMeasurement();
+                auto measurement_params=measurement_str.split('|');
+                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurement_params[0]+",'"+measurement_params[1]+"',"+measurement_params[2]+","+measurementparams[0]+","+measurementparams[1]+");";
                 QSqlQuery temp_query;
                 if(!temp_query.exec(cmd))
                     qDebug()<<"Error with buffer "<<temp_query.lastError();
