@@ -12,12 +12,15 @@ class MainWindow : public QMainWindow{
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+private slots:
+    void on_StartBtn_clicked();
+
 private:
     Ui::MainWindow *ui=nullptr;
     ServerInstance *_server_instance=nullptr;
 private:
-    void StartListener();
-    void StopListener();
+    void StartListeners();
+    void StopListeners();
     void StarManager();
     void StopManager();
 };

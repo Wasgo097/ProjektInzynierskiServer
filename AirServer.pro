@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     dbmanager.cpp \
+    logcontainer.cpp \
     main.cpp \
     mainwindow.cpp \
     measurements.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     Global.h \
     dbmanager.h \
+    logcontainer.h \
     mainwindow.h \
     measurements.h \
     seriallistener.h \

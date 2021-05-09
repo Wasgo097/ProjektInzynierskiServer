@@ -2,7 +2,6 @@
 #include "mainwindow.h"
 #include "measurements.h"
 #include "serverinstance.h"
-//#include "Global.h"
 #include <algorithm>
 #include <QSqlQuery>
 #include <QPluginLoader>
@@ -41,7 +40,6 @@ void DBManager::run(){
     ServerInstance * server=ServerInstance::GetInstance();
     //TODO
     bool valid_sensor_id=false;
-    //get all sensor_id for validation
     if(_db.isOpen()){
         QSqlQuery query("Select DISTINCT Id from Sensors;");
         if(query.exec()){

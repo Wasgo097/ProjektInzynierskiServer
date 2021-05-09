@@ -31,26 +31,26 @@ void ServerInstance::ClearInstance(){
 }
 void ServerInstance::StartListeners(){
     if(_udplistener){
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Start existing udplistener";
 #endif
         _udplistener->start();
     }
     else{
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Start new udplistener";
 #endif
         _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
         _udplistener->start();
     }
     if(_seriallistener){
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Start existing seriallistener";
 #endif
         _seriallistener->start();
     }
     else{
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Start new seriallistener";
 #endif
         _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window));
@@ -59,14 +59,14 @@ void ServerInstance::StartListeners(){
 }
 void ServerInstance::StopListeners(){
     if(_udplistener){
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Stop existing udplistener";
 #endif
         _udplistener->quit();
         _udplistener.reset();
     }
     if(_seriallistener){
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Stop existing seriallistener";
 #endif
         _seriallistener->Quit();
@@ -75,13 +75,13 @@ void ServerInstance::StopListeners(){
 }
 void ServerInstance::StartDatabase(){
     if(_dbManager){
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Start existing db manager";
 #endif
         _dbManager->start();
     }
     else{
-    #ifdef GLOBAL_DEBUG
+    #ifdef SI_DEBUG
             qDebug()<<"Start new db manager";
     #endif
         _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
@@ -90,7 +90,7 @@ void ServerInstance::StartDatabase(){
 }
 void ServerInstance::StopDatabase(){
     if(_dbManager){
-#ifdef GLOBAL_DEBUG
+#ifdef SI_DEBUG
         qDebug()<<"Stop existing db manager";
 #endif
         _dbManager->Quit();

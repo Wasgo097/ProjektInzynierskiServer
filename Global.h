@@ -7,6 +7,7 @@
 #define GLOBAL_DEBUG
 //#define MEAS_DEBUG
 #define MANA_DEBUG
+#define SI_DEBUG
 #define DBTEST
 
 #include <mutex>
