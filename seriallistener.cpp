@@ -98,14 +98,21 @@ void SerialListener::SerialReceived(){
 #ifdef ADV_SERIAL_LISTENER
         auto list=line.split('|');
         if(list.size()==2){
-            int Id=-1,Data=-1;
+            int Id,Data;
+            bool bId,bData;
             try {
-                Id=list[0].toInt();
-                Data=list[1].toUInt();
-                if(Id!=-1&&Data!=-1){
-                    Measurement * slavemeasurement=new MeasurementSlave(Id,date, Data);
-                    std::shared_ptr<Measurement> ptr(slavemeasurement);
-                    _measurements->Push(ptr);
+                Id=list[0].toInt(&bId);
+                Data=list[1].toUInt(&bData);
+                if(bId&&bData){
+                    if(ServerInstance::GetInstance()->CheckSensorId(Id)){
+                        Measurement * slavemeasurement=new MeasurementSlave(Id,date, Data);
+                        std::shared_ptr<Measurement> ptr(slavemeasurement);
+                        _measurements->Push(ptr);
+                    }
+#ifdef GLOBAL_DEBUG
+                        else
+                            qDebug()<<"Sensor Id is invalid";
+#endif
                 }
                 else
                     throw;
@@ -114,17 +121,24 @@ void SerialListener::SerialReceived(){
             }
         }
         else if(list.size()==3){
-            int Id=-1,Temperature=-1,Humidity=-1;
+            int Id,Temperature,Humidity;
+            bool bId,bTemperature,bHumidity;
             try {
-                Id=list[0].toInt();
-                Temperature=list[1].toInt();
-                Humidity=list[2].toInt();
-                if(Id!=-1&&Temperature!=-1&&Humidity!=-1){
-                    Condition temp(Temperature,Humidity);
-                    ServerInstance::GetInstance()->SetConditions(temp);
-                    Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
-                    std::shared_ptr<Measurement> ptr(mastermeasurement);
-                    _measurements->Push(ptr);
+                Id=list[0].toInt(&bId);
+                Temperature=list[1].toInt(&bTemperature);
+                Humidity=list[2].toInt(&bHumidity);
+                if(bId&&bTemperature&&bHumidity){
+                    if(ServerInstance::GetInstance()->CheckSensorId(Id)){
+                        Condition temp(Temperature,Humidity);
+                        ServerInstance::GetInstance()->SetConditions(temp);
+                        Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
+                        std::shared_ptr<Measurement> ptr(mastermeasurement);
+                        _measurements->Push(ptr);
+                    }
+#ifdef GLOBAL_DEBUG
+                        else
+                            qDebug()<<"Sensor Id is invalid";
+#endif
                 }
                 else
                     throw;

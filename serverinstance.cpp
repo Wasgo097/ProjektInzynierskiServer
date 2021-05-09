@@ -3,8 +3,10 @@
 #include "udplistener.h"
 #include "seriallistener.h"
 #include "dbmanager.h"
+#include <algorithm>
 ServerInstance * ServerInstance::Instance=nullptr;
 ServerInstance::ServerInstance(MainWindow *Window):_window{Window}{
+    _valid_sensor_id.Resource=std::shared_ptr<std::list<int>>(new std::list<int>);
     _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
     _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window));
     _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
@@ -101,5 +103,17 @@ void ServerInstance::SetConditions(Condition src){
     _current_conditions.Resourc_mtx.unlock();
 }
 Condition ServerInstance::GetConditions() const{
-   return _current_conditions.Resource;
+    return _current_conditions.Resource;
+}
+void ServerInstance::AddSensorId(int Id){
+    _valid_sensor_id.Resource_mtx.lock();
+    _valid_sensor_id.Resource->push_back(Id);
+    _valid_sensor_id.Resource_mtx.unlock();
+}
+bool ServerInstance::CheckSensorId(int Id){
+    bool result;
+    _valid_sensor_id.Resource_mtx.lock();
+    result=(std::find(_valid_sensor_id.Resource->begin(), _valid_sensor_id.Resource->end(), Id) != _valid_sensor_id.Resource->end());
+    _valid_sensor_id.Resource_mtx.unlock();
+    return result;
 }

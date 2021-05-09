@@ -1,6 +1,7 @@
 #ifndef DBMANAGER_H
 #define DBMANAGER_H
 #include <memory>
+#include <list>
 #include <QThread>
 #include <QDebug>
 #include <QtSql>

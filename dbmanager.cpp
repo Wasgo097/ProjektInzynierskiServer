@@ -2,7 +2,8 @@
 #include "mainwindow.h"
 #include "measurements.h"
 #include "serverinstance.h"
-#include "Global.h"
+//#include "Global.h"
+#include <algorithm>
 #include <QSqlQuery>
 #include <QPluginLoader>
 #include <QVariant>
@@ -38,8 +39,26 @@ void DBManager::run(){
         //this->deleteLater();
     }
     ServerInstance * server=ServerInstance::GetInstance();
+    //TODO
+    bool valid_sensor_id=false;
+    //get all sensor_id for validation
+    if(_db.isOpen()){
+        QSqlQuery query("Select DISTINCT Id from Sensors;");
+        if(query.exec()){
+            valid_sensor_id=true;
+            while(query.next()){
+                server->AddSensorId(query.value(0).toInt());
+            }
+        }
+    }
+    if(!valid_sensor_id){
+        qDebug()<<"ERROR: Can't get sensor id's from db. Thread terminated";
+        //this->terminate();
+    }
     while(_db.isOpen()){
         QString cmd;
+        ////params descriptions in doc
+        QSqlQuery query;
         auto measurement=_measurements->Pop();
         auto measurementstring=measurement->GetMeasurement();
         auto measurementparams=measurementstring.split('|');
@@ -47,8 +66,19 @@ void DBManager::run(){
             Condition conditions=server->GetConditions();
             if(conditions!=Condition::DefaultCondition()){
                 auto conditionparams=conditions.ToQStr().split('|');
-                //params descriptions in doc
-                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+conditionparams[0]+","+conditionparams[1]+");";
+                bool bid;
+                int id=measurementparams[0].toInt(&bid);
+                if(bid&&server->CheckSensorId(id))
+                    cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+conditionparams[0]+","+conditionparams[1]+");";
+//                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES( ? , ? , ? , ? , ? );";
+//#ifdef ADV_MANAGER
+//                query.prepare(cmd);
+//                query.bindValue(0,measurementparams[0].toInt());
+//                query.bindValue(1,measurementparams[1]);
+//                query.bindValue(2,measurementparams[2].toInt());
+//                query.bindValue(3,conditionparams[0].toInt());
+//                query.bindValue(4,conditionparams[1].toInt());
+//#endif
             }
             else{
                 //sent measurement to buffer
@@ -57,22 +87,41 @@ void DBManager::run(){
         }
         //buffer service
         else{
-            for(auto & measurement:_measurement_buffer){
-                auto measurement_str=measurement->GetMeasurement();
-                auto measurement_params=measurement_str.split('|');
-                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurement_params[0]+",'"+measurement_params[1]+"',"+measurement_params[2]+","+measurementparams[0]+","+measurementparams[1]+");";
+            for(auto & current_measurement:_measurement_buffer){
+                auto current_measurement_str=current_measurement->GetMeasurement();
+                auto current_measurement_params=current_measurement_str.split('|');
+                bool bid;
+                int id=current_measurement_params[0].toInt(&bid);
+                if(bid&&server->CheckSensorId(id))
+                    cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+current_measurement_params[0]+",'"+current_measurement_params[1]+"',"+current_measurement_params[2]+","+measurementparams[0]+","+measurementparams[1]+");";
+//                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES( ? , ? , ? , ? , ? );";
+//#ifdef ADV_MANAGER
+//                query.prepare(cmd);
+//                query.bindValue(0,current_measurement_params[0].toInt());
+//                query.bindValue(1,current_measurement_params[1]);
+//                query.bindValue(2,current_measurement_params[2].toInt());
+//                query.bindValue(3,measurementparams[0].toInt());
+//                query.bindValue(4,measurementparams[1].toInt());
+//#endif
                 QSqlQuery temp_query;
                 if(!temp_query.exec(cmd))
                     qDebug()<<"Error with buffer "<<temp_query.lastError();
             }
-            cmd="INSERT INTO Measurements(SensorId,Date,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+measurementparams[3]+");";
+            bool bid;
+            int id=measurementparams[0].toInt(&bid);
+            if(bid&&server->CheckSensorId(id))
+                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+measurementparams[3]+");";
+//            cmd="INSERT INTO Measurements(SensorId,Date,Mea_Temp,Mea_Hum)VALUES( ? , ? , ? , ? );";
+//#ifdef ADV_MANAGER
+//                query.prepare(cmd);
+//                query.bindValue(0,measurementparams[0].toInt());
+//                query.bindValue(1,measurementparams[1]);
+//                query.bindValue(2,measurementparams[2].toInt());
+//                query.bindValue(3,measurementparams[3].toInt());
+//#endif
         }
         if(cmd!=""){
-#ifdef GLOBAL_DEBUG
-            qDebug()<<"DB Manager query: "<<cmd;
-#endif
 #ifdef ADV_MANAGER
-        QSqlQuery query;
             if(query.exec(cmd)){
     #ifdef MANA_DEBUG
                 qDebug()<<"Data added to db";
@@ -84,6 +133,10 @@ void DBManager::run(){
             }
 #endif
         }
+#ifdef GLOBAL_DEBUG
+        else
+            qDebug()<<"CMD is null";
+#endif
     }
 #ifdef MANA_DEBUG
     qDebug()<<"DB closed";
