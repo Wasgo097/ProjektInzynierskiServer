@@ -15,6 +15,8 @@ public:
 private slots:
     void on_StartBtn_clicked();
 
+    void on_SaveLogBtn_clicked();
+
 private:
     Ui::MainWindow *ui=nullptr;
     ServerInstance *_server_instance=nullptr;

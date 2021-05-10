@@ -3,7 +3,15 @@
 #include <list>
 #include <memory>
 #include <QString>
-struct Logs{
+enum class LogType{
+    All=0,
+    Udp=1,
+    Serial=2,
+    Server=3,
+    DBManager=4
+};
+class Logs{
+    friend class LogContainer;
     std::list<std::shared_ptr<QString>> AllLogs;
     std::list<std::shared_ptr<QString>> UDPListenerLogs;
     std::list<std::shared_ptr<QString>> SerialListenerLogs;

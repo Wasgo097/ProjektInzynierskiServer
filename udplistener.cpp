@@ -4,15 +4,18 @@
 #include "serverinstance.h"
 #include "Global.h"
 #include <QDateTime>
+#include "logcontainer.h"
 UdpListener::UdpListener(MainWindow * Parent):QThread{Parent}{
     if(!_socket.bind(PORT)){
         qDebug()<<_socket.errorString();
         qDebug()<<"Listening unsuccessfully, end thread";
+        LogContainer::GetInstance()->AddUdpLogs(_socket.errorString()+"\n"+"Listening unsuccessfully, end thread");
         this->terminate();
         //this->deleteLater();
     }
     else{
         qDebug()<<"Started udp on "<<_socket.localAddress()<<" : "<<_socket.localPort();
+        LogContainer::GetInstance()->AddUdpLogs("Started udp on "+_socket.localAddress().toString()+" : "+_socket.localPort());
         connect(&_socket,&QUdpSocket::readyRead,this,&UdpListener::ReadyRead);
         _measurements=Measurements::GetInstance();
     }
@@ -40,6 +43,7 @@ void UdpListener::ReadyRead(){
             }
     #ifdef GLOBAL_DEBUG
             qDebug()<<"UDP LISTENER READ: "<</*datagram.data()*/ line<<" from "<<datagram.senderAddress()<< " port "<<datagram.senderPort()<<" date "<<date.toString(Qt::DateFormat::ISODate);
+            LogContainer::GetInstance()->AddUdpLogs("UDP LISTENER READ: "+/*datagram.data()*/ line+" from "+datagram.senderAddress().toString()+ " port "+datagram.senderPort()+" date "+date.toString(Qt::DateFormat::ISODate));
     #endif
     #ifdef ADV_UDP_LISTENER
             //QString line=datagram.data();
@@ -47,54 +51,55 @@ void UdpListener::ReadyRead(){
             if(list.size()==2){
                 int Id,Data;
                 bool bId,bData;
-                try {
-                    Id=list[0].toInt(&bId);
-                    Data=list[1].toUInt(&bData);
-                    if(bId&&bData){
-                        if(ServerInstance::GetInstance()->CheckSensorId(Id)){
-                            Measurement * slavemeasurement=new MeasurementSlave(Id,date, Data);
-                            std::shared_ptr<Measurement> ptr(slavemeasurement);
-                            _measurements->Push(ptr);
-                        }
-#ifdef GLOBAL_DEBUG
-                        else
-                            qDebug()<<"Sensor Id is invalid";
-#endif
+                Id=list[0].toInt(&bId);
+                Data=list[1].toUInt(&bData);
+                if(bId&&bData){
+                    if(ServerInstance::GetInstance()->CheckSensorId(Id)){
+                        Measurement * slavemeasurement=new MeasurementSlave(Id,date, Data);
+                        std::shared_ptr<Measurement> ptr(slavemeasurement);
+                        _measurements->Push(ptr);
                     }
-                    else
-                        throw;
-                }  catch (...) {
-                    qDebug()<<"Error with convert qstring to int(slave)";
+#ifdef GLOBAL_DEBUG
+                    else{
+                        qDebug()<<"Sensor Id is invalid";
+                        LogContainer::GetInstance()->AddUdpLogs("Sensor Id is invalid");
+                    }
+#endif
+                }
+                else{
+                    qDebug()<<"Error with convert qstring to int(slave) udplistener";
+                    LogContainer::GetInstance()->AddUdpLogs("Error with convert qstring to int(slave) udplistener");
                 }
             }
             else if(list.size()==3){
                 int Id,Temperature,Humidity;
                 bool bId,bTemperature,bHumidity;
-                try {
-                    Id=list[0].toInt(&bId);
-                    Temperature=list[1].toInt(&bTemperature);
-                    Humidity=list[2].toInt(&bHumidity);
-                    if(bId&&bTemperature&&bHumidity){
-                        if(ServerInstance::GetInstance()->CheckSensorId(Id)){
-                            Condition temp(Temperature,Humidity);
-                            ServerInstance::GetInstance()->SetConditions(temp);
-                            Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
-                            std::shared_ptr<Measurement> ptr(mastermeasurement);
-                            _measurements->Push(ptr);
-                        }
-#ifdef GLOBAL_DEBUG
-                        else
-                            qDebug()<<"Sensor Id is invalid";
-#endif
+                Id=list[0].toInt(&bId);
+                Temperature=list[1].toInt(&bTemperature);
+                Humidity=list[2].toInt(&bHumidity);
+                if(bId&&bTemperature&&bHumidity){
+                    if(ServerInstance::GetInstance()->CheckSensorId(Id)){
+                        Condition temp(Temperature,Humidity);
+                        ServerInstance::GetInstance()->SetConditions(temp);
+                        Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
+                        std::shared_ptr<Measurement> ptr(mastermeasurement);
+                        _measurements->Push(ptr);
                     }
-                    else
-                        throw;
-                }  catch (...) {
-                    qDebug()<<"Error with convert qstring to int(master)";
+#ifdef GLOBAL_DEBUG
+                    else{
+                        qDebug()<<"Sensor Id is invalid";
+                        LogContainer::GetInstance()->AddUdpLogs("Sensor Id is invalid");
+                    }
+#endif
+                }
+                else {
+                    qDebug()<<"Error with convert qstring to int(master) udplistener";
+                    LogContainer::GetInstance()->AddUdpLogs("Error with convert qstring to int(master) udplistener");
                 }
             }
             else{
                 qDebug()<<"Server read invalid data from udp";
+                LogContainer::GetInstance()->AddUdpLogs("Server read invalid data from udp");
             }
     #endif
         }

@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QPluginLoader>
 #include <QVariant>
+#include "logcontainer.h"
 DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
 }
 DBManager::~DBManager(){
@@ -17,6 +18,7 @@ DBManager::~DBManager(){
 void DBManager::Quit(){
 #ifdef GLOBAL_DEBUG
         qDebug()<<"Manager quit";
+        LogContainer::GetInstance()->AddDBManagerLogs("Manager quit");
 #endif
     terminate();
     quit();
@@ -30,15 +32,15 @@ void DBManager::run(){
 #endif
     if(_db.open()){
         qDebug()<<"DB Manager connecting successfully";
+        LogContainer::GetInstance()->AddDBManagerLogs("DB Manager connecting successfully");
         _measurements=Measurements::GetInstance();
     }
     else{
         qDebug()<<"DB Manager connecting unsuccessfully, end thread";
+        LogContainer::GetInstance()->AddDBManagerLogs("DB Manager connecting unsuccessfully, end thread");
         this->terminate();
-        //this->deleteLater();
     }
     ServerInstance * server=ServerInstance::GetInstance();
-    //TODO
     bool valid_sensor_id=false;
     if(_db.isOpen()){
         QSqlQuery query("Select DISTINCT Id from Sensors;");
@@ -50,8 +52,8 @@ void DBManager::run(){
         }
     }
     if(!valid_sensor_id){
-        qDebug()<<"ERROR: Can't get sensor id's from db. Thread terminated";
-        //this->terminate();
+        qDebug()<<"ERROR: Can't get sensor id's from db.";
+        LogContainer::GetInstance()->AddDBManagerLogs("ERROR: Can't get sensor id's from db.");
     }
     while(_db.isOpen()){
         QString cmd;
@@ -90,8 +92,8 @@ void DBManager::run(){
                 auto current_measurement_params=current_measurement_str.split('|');
                 bool bid;
                 int id=current_measurement_params[0].toInt(&bid);
-                if(bid&&server->CheckSensorId(id))
-                    cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+current_measurement_params[0]+",'"+current_measurement_params[1]+"',"+current_measurement_params[2]+","+measurementparams[0]+","+measurementparams[1]+");";
+                if(bid&&server->CheckSensorId(id)){
+                    cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+current_measurement_params[0]+",'"+current_measurement_params[1]+"',"+current_measurement_params[2]+","+measurementparams[2]+","+measurementparams[3]+");";
 //                cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES( ? , ? , ? , ? , ? );";
 //#ifdef ADV_MANAGER
 //                query.prepare(cmd);
@@ -101,13 +103,16 @@ void DBManager::run(){
 //                query.bindValue(3,measurementparams[0].toInt());
 //                query.bindValue(4,measurementparams[1].toInt());
 //#endif
-                QSqlQuery temp_query;
-                if(!temp_query.exec(cmd))
-                    qDebug()<<"Error with buffer "<<temp_query.lastError();
+                    QSqlQuery temp_query;
+                    if(!temp_query.exec(cmd)){
+                        qDebug()<<"Error with buffer "<<temp_query.lastError().text()<<"\t"<<cmd;
+                        LogContainer::GetInstance()->AddDBManagerLogs("Error with buffer "+temp_query.lastError().text()+"\t"+cmd);
+                    }
+                }
             }
             bool bid;
             int id=measurementparams[0].toInt(&bid);
-            if(bid&&server->CheckSensorId(id))
+            if(bid&&server->CheckSensorId(id)){
                 cmd="INSERT INTO Measurements(SensorId,Date,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+measurementparams[3]+");";
 //            cmd="INSERT INTO Measurements(SensorId,Date,Mea_Temp,Mea_Hum)VALUES( ? , ? , ? , ? );";
 //#ifdef ADV_MANAGER
@@ -117,26 +122,32 @@ void DBManager::run(){
 //                query.bindValue(2,measurementparams[2].toInt());
 //                query.bindValue(3,measurementparams[3].toInt());
 //#endif
+            }
         }
         if(cmd!=""){
 #ifdef ADV_MANAGER
             if(query.exec(cmd)){
     #ifdef MANA_DEBUG
                 qDebug()<<"Data added to db";
+                LogContainer::GetInstance()->AddDBManagerLogs("Data added to db");
     #endif
             }
             else{
                 qDebug()<<"ERROR WITH QUERY";
                 qDebug()<<_db.lastError().text()<<"\t"<<query.lastError().text();
+                LogContainer::GetInstance()->AddDBManagerLogs("ERROR WITH QUERY\n"+_db.lastError().text()+"\t"+query.lastError().text());
             }
 #endif
         }
 #ifdef GLOBAL_DEBUG
-        else
+        else{
             qDebug()<<"CMD is null";
+            LogContainer::GetInstance()->AddDBManagerLogs("CMD is null");
+        }
 #endif
     }
 #ifdef MANA_DEBUG
     qDebug()<<"DB closed";
+    LogContainer::GetInstance()->AddDBManagerLogs("DB closed");
 #endif
 }
