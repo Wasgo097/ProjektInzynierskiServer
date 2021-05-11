@@ -11,10 +11,10 @@ class ServerInstance{
 public:
     ServerInstance(const ServerInstance & Other)=delete;
     void operator =(const ServerInstance & Other)=delete;
-    static ServerInstance *GetInstance(MainWindow * Window);
+    static ServerInstance *GetInstance(MainWindow * Window,QString serialport);
     static ServerInstance *GetInstance();
     static void ClearInstance();
-    void StartListeners();
+    void StartListeners(QString serialport);
     void StopListeners();
     void StartDatabase();
     void StopDatabase();
@@ -23,7 +23,7 @@ public:
     void AddSensorId(int Id);
     bool CheckSensorId(int Id);
 protected:
-    ServerInstance(MainWindow * Window);
+    ServerInstance(MainWindow * Window,QString serialport);
     static ServerInstance * Instance;
 private:
     MainWindow * _window;

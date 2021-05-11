@@ -10,7 +10,7 @@ class Measurements;
 class SerialListener : public QThread{
     Q_OBJECT
 public:
-    SerialListener(MainWindow * Parent=nullptr);
+    SerialListener(MainWindow * Parent,QString serialport);
     virtual ~SerialListener();
     void Quit();
 protected:
@@ -23,6 +23,7 @@ private:
     std::shared_ptr<QSerialPort> _serial;
     QByteArray _serial_buffer;
     Measurements * _measurements=nullptr;
+    QString _serial_port;
 };
 
 #endif // SERIALLISTENER_H

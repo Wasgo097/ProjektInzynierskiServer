@@ -14,14 +14,13 @@ public:
     ~MainWindow();
 private slots:
     void on_StartBtn_clicked();
-
     void on_SaveLogBtn_clicked();
-
+    void on_StopBtn_clicked();
 private:
     Ui::MainWindow *ui=nullptr;
     ServerInstance *_server_instance=nullptr;
 private:
-    void StartListeners();
+    void StartListeners(QString serialport);
     void StopListeners();
     void StarManager();
     void StopManager();

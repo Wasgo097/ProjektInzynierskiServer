@@ -4,24 +4,8 @@
 #include "serverinstance.h"
 #include <QSerialPortInfo>
 #include "logcontainer.h"
-SerialListener::SerialListener(MainWindow *Parent):QThread{Parent}{
+SerialListener::SerialListener(MainWindow *Parent,QString serialport):QThread{Parent},_serial_port{serialport}{
     _measurements=Measurements::GetInstance();
-//    _serial.setPortName("com9");
-//    _serial.setBaudRate(QSerialPort::Baud9600);
-//    _serial.setDataBits(QSerialPort::Data8);
-//    _serial.setParity(QSerialPort::NoParity);
-//    _serial.setStopBits(QSerialPort::OneStop);
-//    _serial.setFlowControl(QSerialPort::NoFlowControl);
-//    if(_serial.open(QIODevice::ReadWrite)){
-//        qDebug()<<"Serial Listener opening successfully";
-//        _measurements=Measurements::GetInstance();
-//        connect(&_serial,&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
-//    }
-//    else{
-//        qDebug()<<"Serial Listener opening unsuccessfully, end thread";
-//        this->exit(-1);
-//        this->deleteLater();
-//    }
 }
 SerialListener::~SerialListener(){
     qDebug()<<"~SerialListener";
@@ -61,7 +45,7 @@ void SerialListener::run(){
     }
 }
 void SerialListener::SetSerialParams(){
-    _serial->setPortName("com9");
+    _serial->setPortName(_serial_port);
     _serial->setBaudRate(QSerialPort::Baud9600);
     _serial->setDataBits(QSerialPort::Data8);
     _serial->setParity(QSerialPort::NoParity);

@@ -47,7 +47,7 @@ void LogContainer::SaveLog(LogType Type){
     _logs.Resource_mtx.lock();
     QString DateTime=QDateTime::currentDateTime().toString(Qt::ISODate);
     QFile file(DateTime);
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text|QIODevice::NewOnly)){
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text)){
         QTextStream out(&file);
         if(Type==LogType::All){
             for(auto & log:_logs.Resource->AllLogs){

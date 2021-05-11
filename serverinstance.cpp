@@ -6,15 +6,15 @@
 #include <algorithm>
 #include "logcontainer.h"
 ServerInstance * ServerInstance::Instance=nullptr;
-ServerInstance::ServerInstance(MainWindow *Window):_window{Window}{
+ServerInstance::ServerInstance(MainWindow *Window,QString serialport):_window{Window}{
     _valid_sensor_id.Resource=std::shared_ptr<std::list<int>>(new std::list<int>);
     _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
-    _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window));
+    _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window,serialport));
     _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
 }
-ServerInstance *ServerInstance::GetInstance(MainWindow *Window){
+ServerInstance *ServerInstance::GetInstance(MainWindow *Window,QString serialport){
     if(Instance==nullptr){
-        Instance=new ServerInstance(Window);
+        Instance=new ServerInstance(Window,serialport);
     }
     return Instance;
 }
@@ -30,7 +30,7 @@ void ServerInstance::ClearInstance(){
         Instance=nullptr;
     }
 }
-void ServerInstance::StartListeners(){
+void ServerInstance::StartListeners(QString serialport){
     if(_udplistener){
 #ifdef SI_DEBUG
         qDebug()<<"Start existing udplistener";
@@ -58,7 +58,7 @@ void ServerInstance::StartListeners(){
         qDebug()<<"Start new seriallistener";
         LogContainer::GetInstance()->AddServerLogs("Start new seriallistener");
 #endif
-        _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window));
+        _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window,serialport));
         _seriallistener->start();
     }
 }
