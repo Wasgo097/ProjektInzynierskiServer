@@ -24,6 +24,7 @@ private:
     QByteArray _serial_buffer;
     Measurements * _measurements=nullptr;
     QString _serial_port;
+    MainWindow * _window=nullptr;
 };
 
 #endif // SERIALLISTENER_H

@@ -19,6 +19,26 @@ MainWindow::~MainWindow(){
     StopListeners();
     delete ui;
 }
+void MainWindow::AddLogToServer(QString log){
+    _ui_mtx.lock();
+    ui->serverlogs->append(log);
+    _ui_mtx.unlock();
+}
+void MainWindow::AddLogToUdp(QString log){
+    _ui_mtx.lock();
+    ui->udplogs->append(log);
+    _ui_mtx.unlock();
+}
+void MainWindow::AddLogToSerial(QString log){
+    _ui_mtx.lock();
+    ui->seriallogs->append(log);
+    _ui_mtx.unlock();
+}
+void MainWindow::AddLogToDBManager(QString log){
+    _ui_mtx.lock();
+    ui->dbmanagerlogs->append(log);
+    _ui_mtx.unlock();
+}
 void MainWindow::StartListeners(QString serialport){
     if(_server_instance!=nullptr){
         _server_instance->StartListeners(serialport);

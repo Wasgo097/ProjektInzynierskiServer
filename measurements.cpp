@@ -52,12 +52,19 @@ void Measurements::Push(std::shared_ptr<Measurement> Item){
     qDebug()<<"push go";
 #endif
     _buffer.push(Item);
-    _current_measurements.push_back(Item);
+    //_current_measurements.push_back(Item);
     mlock.unlock();
     _cv.notify_all();
 }
 int Measurements::GetBufferSize(){
     return BUFFER_SIZE;
+}
+std::list<std::shared_ptr<MeasurementSlave>> Measurements::GetMeasurements(){
+    std::list<std::shared_ptr<MeasurementSlave>> temp;
+    _quality_measurements.Resource_mtx.lock();
+    temp=*_quality_measurements.Resource;
+    _quality_measurements.Resource_mtx.unlock();
+    return temp;
 }
 Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
 }

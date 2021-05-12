@@ -50,6 +50,7 @@ enum class MeasuremntType{
     Master
 };
 class Measurement{
+    friend class Measurements;
 protected:
     Measurement(int Id,QDateTime Time):_deviceID{Id},_time{Time}{}
 protected:
@@ -60,6 +61,7 @@ public:
     virtual MeasuremntType GetMeasurementType()const=0;
 };
 class MeasurementSlave:public Measurement{
+    friend class Measurements;
 protected:
     int _data;
 public:
@@ -73,6 +75,7 @@ public:
     }
 };
 class MeasurementMaster:public Measurement{
+    friend class Measurements;
 protected:
     Condition _condition;
 public:

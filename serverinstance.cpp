@@ -33,30 +33,34 @@ void ServerInstance::ClearInstance(){
 void ServerInstance::StartListeners(QString serialport){
     if(_udplistener){
 #ifdef SI_DEBUG
-        qDebug()<<"Start existing udplistener";
-        LogContainer::GetInstance()->AddServerLogs("Start existing udplistener");
+        QString log="Start existing udplistener";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _udplistener->start();
     }
     else{
 #ifdef SI_DEBUG
-        qDebug()<<"Start new udplistener";
-        LogContainer::GetInstance()->AddServerLogs("Start new udplistener");
+        QString log="Start new udplistener";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
         _udplistener->start();
     }
     if(_seriallistener){
 #ifdef SI_DEBUG
-        qDebug()<<"Start existing seriallistener";
-        LogContainer::GetInstance()->AddServerLogs("Start existing seriallistener");
+        QString log="Start existing seriallistener";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _seriallistener->start();
     }
     else{
 #ifdef SI_DEBUG
-        qDebug()<<"Start new seriallistener";
-        LogContainer::GetInstance()->AddServerLogs("Start new seriallistener");
+        QString log="Start new seriallistener";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window,serialport));
         _seriallistener->start();
@@ -65,16 +69,18 @@ void ServerInstance::StartListeners(QString serialport){
 void ServerInstance::StopListeners(){
     if(_udplistener){
 #ifdef SI_DEBUG
-        qDebug()<<"Stop existing udplistener";
-        LogContainer::GetInstance()->AddServerLogs("Stop existing udplistener");
+        QString log="Stop existing udplistener";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _udplistener->quit();
         _udplistener.reset();
     }
     if(_seriallistener){
 #ifdef SI_DEBUG
-        qDebug()<<"Stop existing seriallistener";
-        LogContainer::GetInstance()->AddServerLogs("Stop existing seriallistener");
+        QString log="Stop existing seriallistener";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _seriallistener->Quit();
         _seriallistener.reset();
@@ -83,15 +89,17 @@ void ServerInstance::StopListeners(){
 void ServerInstance::StartDatabase(){
     if(_dbManager){
 #ifdef SI_DEBUG
-        qDebug()<<"Start existing db manager";
-        LogContainer::GetInstance()->AddServerLogs("Start existing db manager");
+        QString log="Start existing db manager";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _dbManager->start();
     }
     else{
     #ifdef SI_DEBUG
-            qDebug()<<"Start new db manager";
-            LogContainer::GetInstance()->AddServerLogs("Start new db manager");
+        QString log="Start new db manager";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
     #endif
         _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
         _dbManager->start();
@@ -100,8 +108,9 @@ void ServerInstance::StartDatabase(){
 void ServerInstance::StopDatabase(){
     if(_dbManager){
 #ifdef SI_DEBUG
-        qDebug()<<"Stop existing db manager";
-        LogContainer::GetInstance()->AddServerLogs("Stop existing db manager");
+        QString log="Stop existing db manager";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddServerLogs(log);
 #endif
         _dbManager->Quit();
         _dbManager.reset();

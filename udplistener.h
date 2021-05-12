@@ -17,6 +17,7 @@ protected slots:
 protected:
     void run()override{}
 private:
+    MainWindow * _window=nullptr;
     QUdpSocket _socket;
     QByteArray _udp_buffer;
     const quint16 PORT=7654;

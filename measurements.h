@@ -18,6 +18,7 @@ public:
     std::shared_ptr<Measurement> Pop();
     void Push(std::shared_ptr<Measurement> Item);
     static int GetBufferSize();
+    std::list<std::shared_ptr<MeasurementSlave>> GetMeasurements();
 protected:
     Measurements(ServerInstance * ServInst);
     Measurements()=default;
@@ -26,7 +27,7 @@ protected:
 private:
     ServerInstance * _server_instance=nullptr;
     std::queue<std::shared_ptr<Measurement>> _buffer;
-    std::list<std::shared_ptr<Measurement>> _current_measurements;
+    ThreadingResources<std::list<std::shared_ptr<MeasurementSlave>>> _quality_measurements;
     std::mutex _mtx;
     std::condition_variable _cv;
 };

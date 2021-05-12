@@ -4,7 +4,7 @@
 #include "serverinstance.h"
 #include <QSerialPortInfo>
 #include "logcontainer.h"
-SerialListener::SerialListener(MainWindow *Parent,QString serialport):QThread{Parent},_serial_port{serialport}{
+SerialListener::SerialListener(MainWindow *Parent,QString serialport):QThread{Parent},_serial_port{serialport},_window{Parent}{
     _measurements=Measurements::GetInstance();
 }
 SerialListener::~SerialListener(){
@@ -14,8 +14,9 @@ SerialListener::~SerialListener(){
 }
 void SerialListener::Quit(){
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"SerialListener quit";
-        LogContainer::GetInstance()->AddSerialLogs("SerialListener quit");
+    QString log="SerialListener quit";
+    qDebug()<<log;
+    LogContainer::GetInstance()->AddSerialLogs(log);
 #endif
     terminate();
     quit();
@@ -26,8 +27,9 @@ void SerialListener::run(){
         SetSerialParams();
         while(!_serial->isOpen()){
             if(_serial->open(QIODevice::ReadWrite)){
-                qDebug()<<"Serial Listener opening successfully";
-                LogContainer::GetInstance()->AddSerialLogs("Serial Listener opening successfully");
+                QString log="Serial Listener opening successfully";
+                qDebug()<<log;
+                LogContainer::GetInstance()->AddSerialLogs(log);
                 //connect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
             }
         }
@@ -38,8 +40,9 @@ void SerialListener::run(){
             if(!IsValid()){
                // disconnect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
                 _serial->close();
-                qDebug()<<"Serial Listener closed";
-                LogContainer::GetInstance()->AddSerialLogs("Serial Listener closed");
+                QString log="Serial Listener closed";
+                qDebug()<<log;
+                LogContainer::GetInstance()->AddSerialLogs(log);
             }
         }
     }
@@ -81,8 +84,9 @@ void SerialListener::SerialReceived(){
             _serial_buffer="";
         }
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"SERIAL LISTENER READ: "<<line<<" date "<<date.toString(Qt::DateFormat::ISODate);
-        LogContainer::GetInstance()->AddSerialLogs("SERIAL LISTENER READ: "+line+" date "+date.toString(Qt::DateFormat::ISODate));
+        QString log="SERIAL LISTENER READ: "+line+" date "+date.toString(Qt::DateFormat::ISODate);
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddSerialLogs(log);
 #endif
 #ifdef ADV_SERIAL_LISTENER
         auto list=line.split('|');
@@ -99,14 +103,16 @@ void SerialListener::SerialReceived(){
                 }
 #ifdef GLOBAL_DEBUG
                 else{
-                    qDebug()<<"Sensor Id is invalid";
-                    LogContainer::GetInstance()->AddSerialLogs("Sensor Id is invalid");
+                    QString log="Sensor Id is invalid";
+                    qDebug()<<log;
+                    LogContainer::GetInstance()->AddSerialLogs(log);
                 }
 #endif
             }
             else{
-                qDebug()<<"Error with convert qstring to int(slave) serial";
-                LogContainer::GetInstance()->AddSerialLogs("Error with convert qstring to int(slave) serial");
+                QString log="Error with convert qstring to int(slave) serial";
+                qDebug()<<log;
+                LogContainer::GetInstance()->AddSerialLogs(log);
             }
 
         }
@@ -126,19 +132,22 @@ void SerialListener::SerialReceived(){
                 }
 #ifdef GLOBAL_DEBUG
                 else{
-                    qDebug()<<"Sensor Id is invalid";
-                    LogContainer::GetInstance()->AddSerialLogs("Sensor Id is invalid");
+                    QString log="Sensor Id is invalid";
+                    qDebug()<<log;
+                    LogContainer::GetInstance()->AddSerialLogs(log);
                 }
 #endif
             }
             else{
-                qDebug()<<"Error with convert qstring to int(master) serial";
-                LogContainer::GetInstance()->AddSerialLogs("Error with convert qstring to int(master) serial");
+                QString log="Error with convert qstring to int(master) serial";
+                qDebug()<<log;
+                LogContainer::GetInstance()->AddSerialLogs(log);
             }
         }
         else{
-            qDebug()<<"Server read invalid data from serial";
-            LogContainer::GetInstance()->AddSerialLogs("Server read invalid data from serial");
+            QString log="Server read invalid data from serial";
+            qDebug()<<log;
+            LogContainer::GetInstance()->AddSerialLogs(log);
         }
 #endif
     }

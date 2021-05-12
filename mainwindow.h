@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <memory>
+#include <mutex>
 class ServerInstance;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -12,6 +13,10 @@ class MainWindow : public QMainWindow{
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void AddLogToServer(QString log);
+    void AddLogToUdp(QString log);
+    void AddLogToSerial(QString log);
+    void AddLogToDBManager(QString log);
 private slots:
     void on_StartBtn_clicked();
     void on_SaveLogBtn_clicked();
@@ -19,6 +24,7 @@ private slots:
 private:
     Ui::MainWindow *ui=nullptr;
     ServerInstance *_server_instance=nullptr;
+    std::mutex _ui_mtx;
 private:
     void StartListeners(QString serialport);
     void StopListeners();

@@ -22,5 +22,6 @@ protected:
     std::list<std::shared_ptr<Measurement>> _measurement_buffer;
 private:
     Measurements * _measurements=nullptr;
+    MainWindow * _window=nullptr;
 };
 #endif // DBMANAGER_H

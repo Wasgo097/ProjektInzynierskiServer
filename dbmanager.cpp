@@ -7,7 +7,7 @@
 #include <QPluginLoader>
 #include <QVariant>
 #include "logcontainer.h"
-DBManager::DBManager(MainWindow * Parent):QThread{Parent}{
+DBManager::DBManager(MainWindow * Parent):QThread{Parent},_window{Parent}{
 }
 DBManager::~DBManager(){
     qDebug()<<"~DBManager";
@@ -17,8 +17,9 @@ DBManager::~DBManager(){
 }
 void DBManager::Quit(){
 #ifdef GLOBAL_DEBUG
-        qDebug()<<"Manager quit";
-        LogContainer::GetInstance()->AddDBManagerLogs("Manager quit");
+    QString log="Manager quit";
+    qDebug()<<log;
+    LogContainer::GetInstance()->AddDBManagerLogs(log);
 #endif
     terminate();
     quit();
@@ -31,13 +32,15 @@ void DBManager::run(){
     _db.setDatabaseName("Database.db");
 #endif
     if(_db.open()){
-        qDebug()<<"DB Manager connecting successfully";
-        LogContainer::GetInstance()->AddDBManagerLogs("DB Manager connecting successfully");
+        QString log="DB Manager connecting successfully";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddDBManagerLogs(log);
         _measurements=Measurements::GetInstance();
     }
     else{
-        qDebug()<<"DB Manager connecting unsuccessfully, end thread";
-        LogContainer::GetInstance()->AddDBManagerLogs("DB Manager connecting unsuccessfully, end thread");
+        QString log="DB Manager connecting unsuccessfully, end thread";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddDBManagerLogs(log);
         this->terminate();
     }
     ServerInstance * server=ServerInstance::GetInstance();
@@ -52,8 +55,9 @@ void DBManager::run(){
         }
     }
     if(!valid_sensor_id){
-        qDebug()<<"ERROR: Can't get sensor id's from db.";
-        LogContainer::GetInstance()->AddDBManagerLogs("ERROR: Can't get sensor id's from db.");
+        QString log="ERROR: Can't get sensor id's from db";
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddDBManagerLogs(log);
     }
     while(_db.isOpen()){
         QString cmd;
@@ -87,12 +91,14 @@ void DBManager::run(){
                     cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+current_measurement_params[0]+",'"+current_measurement_params[1]+"',"+current_measurement_params[2]+","+measurementparams[2]+","+measurementparams[3]+");";
                     QSqlQuery temp_query;
                     if(!temp_query.exec(cmd)){
-                        qDebug()<<"Error with buffer "<<temp_query.lastError().text()<<"\t"<<cmd;
-                        LogContainer::GetInstance()->AddDBManagerLogs("Error with buffer "+temp_query.lastError().text()+"\t"+cmd);
+                        QString log="Error with buffer "+temp_query.lastError().text()+"\t"+cmd;
+                        qDebug()<<log;
+                        LogContainer::GetInstance()->AddDBManagerLogs(log);
                     }
                     else{
-                        qDebug()<<"Added data from buffer";
-                        LogContainer::GetInstance()->AddDBManagerLogs("Added data from buffer");
+                        QString log="Added data from buffer";
+                        qDebug()<<log;
+                        LogContainer::GetInstance()->AddDBManagerLogs(log);
                     }
                 }
             }
@@ -107,26 +113,29 @@ void DBManager::run(){
 #ifdef ADV_MANAGER
             if(query.exec(cmd)){
     #ifdef MANA_DEBUG
-                qDebug()<<"Data added to db";
-                LogContainer::GetInstance()->AddDBManagerLogs("Data added to db");
+                QString log="Data added to db";
+                qDebug()<<log;
+                LogContainer::GetInstance()->AddDBManagerLogs(log);
     #endif
             }
             else{
-                qDebug()<<"ERROR WITH QUERY";
-                qDebug()<<_db.lastError().text()<<"\t"<<query.lastError().text();
-                LogContainer::GetInstance()->AddDBManagerLogs("ERROR WITH QUERY\n"+_db.lastError().text()+"\t"+query.lastError().text());
+                QString log="ERROR WITH QUERY\n"+_db.lastError().text()+"\t"+query.lastError().text();
+                qDebug()<<log;
+                LogContainer::GetInstance()->AddDBManagerLogs(log);
             }
 #endif
         }
 #ifdef GLOBAL_DEBUG
         else{
-            qDebug()<<"CMD is null";
-            LogContainer::GetInstance()->AddDBManagerLogs("CMD is null");
+            QString log="CMD is null";
+            qDebug()<<log;
+            LogContainer::GetInstance()->AddDBManagerLogs(log);
         }
 #endif
     }
 #ifdef MANA_DEBUG
-    qDebug()<<"DB closed";
-    LogContainer::GetInstance()->AddDBManagerLogs("DB closed");
+    QString log="DB closed";
+    qDebug()<<log;
+    LogContainer::GetInstance()->AddDBManagerLogs(log);
 #endif
 }
