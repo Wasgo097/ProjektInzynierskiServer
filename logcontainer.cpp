@@ -47,7 +47,23 @@ void LogContainer::AddServerLogs(QString log){
 void LogContainer::SaveLog(LogType Type){
     _logs.Resource_mtx.lock();
     QString DateTime=QDateTime::currentDateTime().toString("dd MM yyyy hh mm ss");
-    std::string file_name="logs\\"+DateTime.toStdString()+"_log.txt";
+    std::string file_name=DateTime.toStdString()+"_log.txt";
+    if(Type==LogType::All){
+        file_name="All_"+file_name;
+    }
+    else if (Type==LogType::Serial) {
+        file_name="Serial_"+file_name;
+    }
+    else if (Type==LogType::Server) {
+        file_name="Server_"+file_name;
+    }
+    else if(Type==LogType::Udp){
+        file_name="Udp"+file_name;
+    }
+    else{
+        file_name="DBManager_"+file_name;
+    }
+    file_name="logs\\"+file_name;
     std::fstream file;
     file.open(file_name.c_str(),std::fstream::out);
     if(file.is_open()==true){

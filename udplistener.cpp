@@ -10,13 +10,15 @@ UdpListener::UdpListener(MainWindow * Parent):QThread{Parent},_window{Parent}{
         QString log=_socket.errorString()+"\n"+"Listening unsuccessfully, end thread";
         qDebug()<<log;
         LogContainer::GetInstance()->AddUdpLogs(log);
+        _window->AddLogToUdp(log);
         this->terminate();
         //this->deleteLater();
     }
     else{
-        QString log="Started udp on "+_socket.localAddress().toString()+" : "+_socket.localPort();
+        QString log="Started udp on localhost : "+QString::number(PORT) ;
         qDebug()<<log;
         LogContainer::GetInstance()->AddUdpLogs(log);
+        _window->AddLogToUdp(log);
         connect(&_socket,&QUdpSocket::readyRead,this,&UdpListener::ReadyRead);
         _measurements=Measurements::GetInstance();
     }
@@ -46,6 +48,7 @@ void UdpListener::ReadyRead(){
             QString log="UDP LISTENER READ: "+line+" from "+datagram.senderAddress().toString()+" port "+datagram.senderPort()+" date "+date.toString(Qt::DateFormat::ISODate);
             qDebug()<<log;
             LogContainer::GetInstance()->AddUdpLogs(log);
+            _window->AddLogToUdp(log);
     #endif
     #ifdef ADV_UDP_LISTENER
             //QString line=datagram.data();
@@ -66,6 +69,7 @@ void UdpListener::ReadyRead(){
                         QString log="Sensor Id is invalid";
                         qDebug()<<log;
                         LogContainer::GetInstance()->AddUdpLogs("Sensor Id is invalid");
+                        _window->AddLogToUdp(log);
                     }
 #endif
                 }
@@ -73,6 +77,7 @@ void UdpListener::ReadyRead(){
                     QString log="Error with convert qstring to int(slave) udplistener";
                     qDebug()<<log;
                     LogContainer::GetInstance()->AddUdpLogs(log);
+                    _window->AddLogToUdp(log);
                 }
             }
             else if(list.size()==3){
@@ -94,6 +99,7 @@ void UdpListener::ReadyRead(){
                         QString log="Sensor Id is invalid";
                         qDebug()<<log;
                         LogContainer::GetInstance()->AddUdpLogs(log);
+                        _window->AddLogToUdp(log);
                     }
 #endif
                 }
@@ -101,12 +107,14 @@ void UdpListener::ReadyRead(){
                     QString log="Error with convert qstring to int(master) udplistener";
                     qDebug()<<log;
                     LogContainer::GetInstance()->AddUdpLogs(log);
+                    _window->AddLogToUdp(log);
                 }
             }
             else{
                 QString log="Server read invalid data from udp";
                 qDebug()<<log;
                 LogContainer::GetInstance()->AddUdpLogs(log);
+                _window->AddLogToUdp(log);
             }
     #endif
         }

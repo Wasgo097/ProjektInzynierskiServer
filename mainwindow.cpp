@@ -20,21 +20,25 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 void MainWindow::AddLogToServer(QString log){
+    //error with QTextCursor
     _ui_mtx.lock();
     ui->serverlogs->append(log);
     _ui_mtx.unlock();
 }
 void MainWindow::AddLogToUdp(QString log){
+    //error with QTextCursor
     _ui_mtx.lock();
     ui->udplogs->append(log);
     _ui_mtx.unlock();
 }
 void MainWindow::AddLogToSerial(QString log){
+    //error with QTextCursor
     _ui_mtx.lock();
     ui->seriallogs->append(log);
     _ui_mtx.unlock();
 }
 void MainWindow::AddLogToDBManager(QString log){
+    //error with QTextCursor
     _ui_mtx.lock();
     ui->dbmanagerlogs->append(log);
     _ui_mtx.unlock();
