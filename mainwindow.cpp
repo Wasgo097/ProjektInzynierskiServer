@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->LogType->addItem("SerialListener Logs");
     ui->LogType->addItem("Server Logs");
     ui->LogType->addItem("DB Manager Logs");
+    //temp
+    on_StartBtn_clicked();
 }
 MainWindow::~MainWindow(){
     StopManager();

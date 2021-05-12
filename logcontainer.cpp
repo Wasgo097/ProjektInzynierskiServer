@@ -1,9 +1,10 @@
 #include "logcontainer.h"
 #include <QDateTime>
 #include <QString>
-#include <QFile>
-#include <QTextStream>
 #include <QDebug>
+#include <iostream>
+#include <fstream>
+#include <string>
 LogContainer * LogContainer::Instance=nullptr;
 LogContainer::LogContainer(){
     _logs.Resource=std::shared_ptr<Logs>(new Logs);
@@ -45,33 +46,34 @@ void LogContainer::AddServerLogs(QString log){
 }
 void LogContainer::SaveLog(LogType Type){
     _logs.Resource_mtx.lock();
-    QString DateTime=QDateTime::currentDateTime().toString(Qt::ISODate);
-    QFile file(DateTime);
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        QTextStream out(&file);
+    QString DateTime=QDateTime::currentDateTime().toString("dd MM yyyy hh mm ss");
+    std::string file_name="logs\\"+DateTime.toStdString()+"_log.txt";
+    std::fstream file;
+    file.open(file_name.c_str(),std::fstream::out);
+    if(file.is_open()==true){
         if(Type==LogType::All){
             for(auto & log:_logs.Resource->AllLogs){
-                out<<*log<<"\n";
+                file<<log->toStdString()<<std::endl;
             }
         }
         else if (Type==LogType::Serial) {
             for(auto & log:_logs.Resource->SerialListenerLogs){
-                out<<*log<<"\n";
+                file<<log->toStdString()<<std::endl;
             }
         }
         else if (Type==LogType::Server) {
             for(auto & log:_logs.Resource->ServerLogs){
-                out<<*log<<"\n";
+                file<<log->toStdString()<<std::endl;
             }
         }
         else if(Type==LogType::Udp){
             for(auto & log:_logs.Resource->UDPListenerLogs){
-                out<<*log<<"\n";
+                file<<log->toStdString()<<std::endl;
             }
         }
         else{
             for(auto & log:_logs.Resource->DBManagerLogs){
-                out<<*log<<"\n";
+                file<<log->toStdString()<<std::endl;
             }
         }
         file.close();
