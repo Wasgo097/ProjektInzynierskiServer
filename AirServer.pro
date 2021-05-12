@@ -15,6 +15,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     measurements.cpp \
+    qcustomplot.cpp \
     seriallistener.cpp \
     serverinstance.cpp \
     udplistener.cpp
@@ -26,6 +27,7 @@ HEADERS += \
     logutilities.h \
     mainwindow.h \
     measurements.h \
+    qcustomplot.h \
     seriallistener.h \
     serverinstance.h \
     udplistener.h

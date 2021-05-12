@@ -80,3 +80,10 @@ void MainWindow::on_StopBtn_clicked(){
 //    StopManager();
 //    StopListeners();
 }
+void MainWindow::on_tabWidget_currentChanged(int index){
+    //plot classes from https://www.qcustomplot.com/index.php/tutorials/basicplotting
+    //plot tab
+    if(index==2){
+
+    }
+}
