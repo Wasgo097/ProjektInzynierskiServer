@@ -59,12 +59,17 @@ void Measurements::Push(std::shared_ptr<Measurement> Item){
 int Measurements::GetBufferSize(){
     return BUFFER_SIZE;
 }
-std::list<std::shared_ptr<MeasurementSlave>> Measurements::GetMeasurements(){
-    std::list<std::shared_ptr<MeasurementSlave>> temp;
+std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(){
+    std::list<std::shared_ptr<MeasurementFull>> temp;
     _quality_measurements.Resource_mtx.lock();
     temp=*_quality_measurements.Resource;
     _quality_measurements.Resource_mtx.unlock();
     return temp;
+}
+void Measurements::AddValidSlaveMeasurment(std::shared_ptr<MeasurementFull> Measurement){
+    _quality_measurements.Resource_mtx.lock();
+    _quality_measurements.Resource->push_back(Measurement);
+    _quality_measurements.Resource_mtx.unlock();
 }
 Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
 }

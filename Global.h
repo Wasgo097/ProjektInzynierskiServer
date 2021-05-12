@@ -47,7 +47,8 @@ struct Condition{
 };
 enum class MeasuremntType{
     Slave,
-    Master
+    Master,
+    Full
 };
 class Measurement{
     friend class Measurements;
@@ -60,7 +61,7 @@ public:
     virtual QString GetMeasurement()const=0;
     virtual MeasuremntType GetMeasurementType()const=0;
 };
-class MeasurementSlave:public Measurement{
+class MeasurementSlave:virtual public Measurement{
     friend class Measurements;
 protected:
     int _data;
@@ -74,7 +75,7 @@ public:
         return MeasuremntType::Slave;
     }
 };
-class MeasurementMaster:public Measurement{
+class MeasurementMaster:virtual public Measurement{
     friend class Measurements;
 protected:
     Condition _condition;
@@ -86,6 +87,19 @@ public:
 public:
     virtual MeasuremntType GetMeasurementType() const override{
         return MeasuremntType::Master;
+    }
+};
+class MeasurementFull: public MeasurementSlave,public MeasurementMaster{
+    friend class Measurements;
+public:
+    MeasurementFull(int Id,QDateTime Time,int Data,Condition Condition):Measurement(Id,Time),MeasurementSlave(Id,Time,Data),MeasurementMaster(Id,Time,Condition){
+    }
+    virtual QString GetMeasurement()const override{
+        return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data)+"|"+_condition.ToQStr();
+    }
+public:
+    virtual MeasuremntType GetMeasurementType() const override{
+        return MeasuremntType::Full;
     }
 };
 #endif // GLOBAL_H
