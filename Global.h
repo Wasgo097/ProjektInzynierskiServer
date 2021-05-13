@@ -60,6 +60,7 @@ protected:
 public:
     virtual QString GetMeasurement()const=0;
     virtual MeasuremntType GetMeasurementType()const=0;
+    virtual ~Measurement(){}
 };
 class MeasurementSlave:virtual public Measurement{
     friend class Measurements;
@@ -70,10 +71,10 @@ public:
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data);
     }
-public:
     virtual MeasuremntType GetMeasurementType() const override{
         return MeasuremntType::Slave;
     }
+    virtual ~MeasurementSlave(){}
 };
 class MeasurementMaster:virtual public Measurement{
     friend class Measurements;
@@ -84,10 +85,10 @@ public:
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+_condition.ToQStr();
     }
-public:
     virtual MeasuremntType GetMeasurementType() const override{
         return MeasuremntType::Master;
     }
+    virtual ~MeasurementMaster(){}
 };
 class MeasurementFull: public MeasurementSlave,public MeasurementMaster{
     friend class Measurements;
@@ -97,9 +98,9 @@ public:
     virtual QString GetMeasurement()const override{
         return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data)+"|"+_condition.ToQStr();
     }
-public:
     virtual MeasuremntType GetMeasurementType() const override{
         return MeasuremntType::Full;
     }
+    virtual ~MeasurementFull(){}
 };
 #endif // GLOBAL_H
