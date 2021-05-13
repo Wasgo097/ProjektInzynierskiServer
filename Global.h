@@ -61,6 +61,7 @@ public:
     virtual QString GetMeasurement()const=0;
     virtual MeasuremntType GetMeasurementType()const=0;
     virtual ~Measurement(){}
+    QDateTime GetTime()const{return _time;}
 };
 class MeasurementSlave:virtual public Measurement{
     friend class Measurements;

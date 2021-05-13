@@ -52,7 +52,6 @@ void Measurements::Push(std::shared_ptr<Measurement> Item){
     qDebug()<<"push go";
 #endif
     _buffer.push(Item);
-    //_current_measurements.push_back(Item);
     mlock.unlock();
     _cv.notify_all();
 }
@@ -61,15 +60,15 @@ int Measurements::GetBufferSize(){
 }
 std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(){
     std::list<std::shared_ptr<MeasurementFull>> temp;
-    _quality_measurements.Resource_mtx.lock();
-    temp=*_quality_measurements.Resource;
-    _quality_measurements.Resource_mtx.unlock();
+    _current_measurements.Resource_mtx.lock();
+    temp=*_current_measurements.Resource;
+    _current_measurements.Resource_mtx.unlock();
     return temp;
 }
-void Measurements::AddValidSlaveMeasurment(std::shared_ptr<MeasurementFull> Measurement){
-    _quality_measurements.Resource_mtx.lock();
-    _quality_measurements.Resource->push_back(Measurement);
-    _quality_measurements.Resource_mtx.unlock();
+void Measurements::AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement){
+    _current_measurements.Resource_mtx.lock();
+    _current_measurements.Resource->push_back(Measurement);
+    _current_measurements.Resource_mtx.unlock();
 }
 Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
 }

@@ -79,6 +79,9 @@ void DBManager::run(){
                 if(bid&&server->CheckSensorId(id)){
                     cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+conditionparams[0]+","+conditionparams[1]+");";
                     ///todo add valid measurement
+//                    MeasurementFull * meas=new MeasurementFull(id,measurement->GetTime(),measurementparams[2].toInt(),conditions);
+//                    std::shared_ptr<MeasurementFull> tempptr(meas);
+//                    _measurements->AddValidMeasurment(tempptr);
                 }
             }
             else{
@@ -86,8 +89,9 @@ void DBManager::run(){
                 _measurement_buffer.push_front(measurement);
             }
         }
-        //buffer service
+        //master sensor
         else{
+            //buffer service
             for(auto & current_measurement:_measurement_buffer){
                 auto current_measurement_str=current_measurement->GetMeasurement();
                 auto current_measurement_params=current_measurement_str.split('|');
@@ -104,6 +108,10 @@ void DBManager::run(){
                     }
                     else{
                         ///todo add valid measurement
+//                        Condition condition=ServerInstance::GetInstance()->GetConditions();
+//                        MeasurementFull * meas=new MeasurementFull(id,measurement->GetTime(),measurementparams[2].toInt(),condition);
+//                        std::shared_ptr<MeasurementFull> tempptr(meas);
+//                        _measurements->AddValidMeasurment(tempptr);
 #ifdef MANA_DEBUG
                         QString log="Added data from buffer";
                         qDebug()<<log;
