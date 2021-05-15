@@ -7,6 +7,7 @@
 #include "logutilities.h"
 //for color
 #include <QRandomGenerator>
+#include <QMessageBox>
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
     ui->LogType->addItem("All Logs");
@@ -164,7 +165,6 @@ void MainWindow::on_tabWidget_currentChanged(int index){
         ui->plot->legend->setBrush(QColor(255, 255, 255, 150));
         ui->plot->replot();
 #else
-        qDebug()<<"Draw plot";
         bool bid;
         int id=ui->device_id->toPlainText().toInt(&bid);
         bool bcount;
@@ -178,6 +178,12 @@ void MainWindow::on_tabWidget_currentChanged(int index){
             for(const auto & tempmeasur:tempmeasurements)
                 measurements.push_back(tempmeasur);
             if(!measurements.empty()){
+                QMessageBox msg(this);
+                msg.setIcon(QMessageBox::Information);
+                msg.setText("Dane odczytane z czujników mogą się różnić w zależności od lokalizacji. Dodatkowo w tych samych warunkach czujniki zwracają inne wartości. Wyniki to z wbudowanych wad czujników");
+                msg.setWindowTitle("Informacja o jakości pomiaru");
+                msg.setStandardButtons(QMessageBox::Ok);
+                msg.exec();
                 // set locale to english, so we get english month names:
                 ui->plot->setLocale(QLocale(QLocale::Polish, QLocale::Poland));
                 ui->plot->addGraph();
@@ -198,9 +204,10 @@ void MainWindow::on_tabWidget_currentChanged(int index){
                 ui->plot->xAxis->setTicker(dateTicker);
                 // configure left axis text labels:
                 QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-                textTicker->addTick(150, "green zone");
-                textTicker->addTick(250, "yellow zone");
-                textTicker->addTick(350, "red zone!");
+                textTicker->addTick(150, "green zone 150");
+                textTicker->addTick(250, "yellow zone 250");
+                textTicker->addTick(350, "red zone! 350");
+                textTicker->addTick(700, "700");
                 ui->plot->yAxis->setTicker(textTicker);
                 // set a more compact font size for bottom and left axis tick labels:
                 ui->plot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));

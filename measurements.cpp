@@ -63,9 +63,10 @@ std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(int de
     std::list<std::shared_ptr<MeasurementFull>> temp;
     _current_measurements.Resource_mtx.lock();
     int tempcount=0;
-    for(const auto & tempmeas:*_current_measurements.Resource){
-        if(tempmeas->_deviceID==deviceid){
-            temp.push_back(tempmeas);
+    //add element from end to begin
+    for (auto it=_current_measurements.Resource->rbegin(); it!=_current_measurements.Resource->rend(); ++it){
+        if((*it)->_deviceID==deviceid){
+            temp.push_back(*it);
             tempcount++;
             if(tempcount==count)
                 break;
