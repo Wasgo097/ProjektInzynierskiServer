@@ -9,8 +9,9 @@
 #define MANA_DEBUG
 #define SI_DEBUG
 #define DBTEST
-//autostart server
+////autostart server
 #define AUTO_START
+////create plot from documentation
 //#define TEST_PLOT
 
 #include <mutex>
@@ -79,6 +80,7 @@ public:
         return MeasuremntType::Slave;
     }
     virtual ~MeasurementSlave(){}
+    int GetData()const{return _data;}
 };
 class MeasurementMaster:virtual public Measurement{
     friend class Measurements;
@@ -93,6 +95,7 @@ public:
         return MeasuremntType::Master;
     }
     virtual ~MeasurementMaster(){}
+    Condition GetCondition()const{return _condition;}
 };
 class MeasurementFull: public MeasurementSlave,public MeasurementMaster{
     friend class Measurements;

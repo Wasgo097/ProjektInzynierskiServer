@@ -18,7 +18,7 @@ public:
     std::shared_ptr<Measurement> Pop();
     void Push(std::shared_ptr<Measurement> Item);
     static int GetBufferSize();
-    std::list<std::shared_ptr<MeasurementFull>> GetMeasurements();
+    std::list<std::shared_ptr<MeasurementFull>> GetMeasurements(int deviceid,int count);
     void AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement);
 protected:
     Measurements(ServerInstance * ServInst);

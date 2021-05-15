@@ -59,10 +59,18 @@ void Measurements::Push(std::shared_ptr<Measurement> Item){
 int Measurements::GetBufferSize(){
     return BUFFER_SIZE;
 }
-std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(){
+std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(int deviceid,int count){
     std::list<std::shared_ptr<MeasurementFull>> temp;
     _current_measurements.Resource_mtx.lock();
-    temp=*_current_measurements.Resource;
+    int tempcount=0;
+    for(const auto & tempmeas:*_current_measurements.Resource){
+        if(tempmeas->_deviceID==deviceid){
+            temp.push_back(tempmeas);
+            tempcount++;
+            if(tempcount==count)
+                break;
+        }
+    }
     _current_measurements.Resource_mtx.unlock();
     return temp;
 }
