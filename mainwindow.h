@@ -22,6 +22,8 @@ private slots:
     void on_StartBtn_clicked();
     void on_SaveLogBtn_clicked();
     void on_StopBtn_clicked();
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui=nullptr;
     ServerInstance *_server_instance=nullptr;

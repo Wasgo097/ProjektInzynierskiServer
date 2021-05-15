@@ -11,6 +11,7 @@
 #define DBTEST
 //autostart server
 #define AUTO_START
+//#define TEST_PLOT
 
 #include <mutex>
 #include <memory>
