@@ -79,9 +79,8 @@ void DBManager::run(){
                 if(bid&&server->CheckSensorId(id)){
                     cmd="INSERT INTO Measurements(SensorId,Date,Mea_Data,Mea_Temp,Mea_Hum)VALUES("+measurementparams[0]+",'"+measurementparams[1]+"',"+measurementparams[2]+","+conditionparams[0]+","+conditionparams[1]+");";
                     ///todo add valid measurement
-//                    MeasurementFull * meas=new MeasurementFull(id,measurement->GetTime(),measurementparams[2].toInt(),conditions);
-//                    std::shared_ptr<MeasurementFull> tempptr(meas);
-//                    _measurements->AddValidMeasurment(tempptr);
+                    std::shared_ptr<MeasurementFull> tempptr= std::make_shared<MeasurementFull>(id,measurement->GetTime(),measurementparams[2].toInt(),conditions);
+                    _measurements->AddValidMeasurment(tempptr);
                 }
             }
             else{
@@ -108,10 +107,10 @@ void DBManager::run(){
                     }
                     else{
                         ///todo add valid measurement
-//                        Condition condition=ServerInstance::GetInstance()->GetConditions();
-//                        MeasurementFull * meas=new MeasurementFull(id,measurement->GetTime(),measurementparams[2].toInt(),condition);
-//                        std::shared_ptr<MeasurementFull> tempptr(meas);
-//                        _measurements->AddValidMeasurment(tempptr);
+                        Condition condition=ServerInstance::GetInstance()->GetConditions();
+                        MeasurementFull * meas=new MeasurementFull(id,measurement->GetTime(),measurementparams[2].toInt(),condition);
+                        std::shared_ptr<MeasurementFull> tempptr(meas);
+                        _measurements->AddValidMeasurment(tempptr);
 #ifdef MANA_DEBUG
                         QString log="Added data from buffer";
                         qDebug()<<log;

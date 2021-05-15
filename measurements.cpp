@@ -71,4 +71,8 @@ void Measurements::AddValidMeasurment(std::shared_ptr<MeasurementFull> Measureme
     _current_measurements.Resource_mtx.unlock();
 }
 Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
+    _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+}
+Measurements::Measurements(){
+    _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
 }

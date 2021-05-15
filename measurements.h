@@ -22,7 +22,7 @@ public:
     void AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement);
 protected:
     Measurements(ServerInstance * ServInst);
-    Measurements()=default;
+    Measurements();
     static Measurements * Instance;
     static const int BUFFER_SIZE=10;
 private:
