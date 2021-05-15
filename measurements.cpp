@@ -1,5 +1,6 @@
 #include "measurements.h"
 #include "serverinstance.h"
+#include "mainwindow.h"
 #include <QDebug>
 Measurements * Measurements::Instance=nullptr;
 Measurements *Measurements::GetInstance(ServerInstance* ServInst){
@@ -66,9 +67,17 @@ std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(){
     return temp;
 }
 void Measurements::AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement){
+    int count=0;
     _current_measurements.Resource_mtx.lock();
     _current_measurements.Resource->push_back(Measurement);
+    count=_current_measurements.Resource->size();
     _current_measurements.Resource_mtx.unlock();
+    if(_server_instance!=nullptr){
+        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
+    }
+    else if((_server_instance=ServerInstance::GetInstance())!=nullptr){
+        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
+    }
 }
 Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
     _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);

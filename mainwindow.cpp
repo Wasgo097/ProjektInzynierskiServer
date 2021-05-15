@@ -11,8 +11,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->LogType->addItem("SerialListener Logs");
     ui->LogType->addItem("Server Logs");
     ui->LogType->addItem("DB Manager Logs");
-    //temp
+#ifdef AUTO_START
     on_StartBtn_clicked();
+#endif
 }
 MainWindow::~MainWindow(){
     StopManager();
@@ -41,6 +42,12 @@ void MainWindow::AddLogToDBManager(QString log){
     //error with QTextCursor
     _ui_mtx.lock();
     ui->dbmanagerlogs->append(log);
+    _ui_mtx.unlock();
+}
+void MainWindow::SetMeasurementsCount(int count){
+    //error with QTextCursor
+    _ui_mtx.lock();
+    ui->count_of_measurements->setText(QString::number(count));
     _ui_mtx.unlock();
 }
 void MainWindow::StartListeners(QString serialport){

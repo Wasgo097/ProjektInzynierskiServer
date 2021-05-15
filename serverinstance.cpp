@@ -145,3 +145,6 @@ bool ServerInstance::CheckSensorId(int Id){
     _valid_sensor_id.Resource_mtx.unlock();
     return result;
 }
+MainWindow * ServerInstance::GLOBAL_GET_WINDOW(){
+    return _window;
+}

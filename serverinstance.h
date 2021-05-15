@@ -22,6 +22,7 @@ public:
     Condition GetConditions()const;
     void AddSensorId(int Id);
     bool CheckSensorId(int Id);
+    MainWindow * GLOBAL_GET_WINDOW();
 protected:
     ServerInstance(MainWindow * Window,QString serialport);
     static ServerInstance * Instance;

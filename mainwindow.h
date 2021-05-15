@@ -17,6 +17,7 @@ public:
     void AddLogToUdp(QString log);
     void AddLogToSerial(QString log);
     void AddLogToDBManager(QString log);
+    void SetMeasurementsCount(int count);
 private slots:
     void on_StartBtn_clicked();
     void on_SaveLogBtn_clicked();
