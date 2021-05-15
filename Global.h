@@ -8,9 +8,9 @@
 //#define MEAS_DEBUG
 #define MANA_DEBUG
 #define SI_DEBUG
-#define DBTEST
+//#define DBTEST
 ////autostart server
-#define AUTO_START
+//#define AUTO_START
 ////create plot from documentation
 //#define TEST_PLOT
 

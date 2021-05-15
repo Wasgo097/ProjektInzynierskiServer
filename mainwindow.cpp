@@ -174,7 +174,7 @@ void MainWindow::on_tabWidget_currentChanged(int index){
             //get Measurements as std list
             auto tempmeasurements=Measurements::GetInstance()->GetMeasurements(id,count);
             //convert list to vector for [] operator
-            std::vector<std::shared_ptr<MeasurementFull>> measurements(tempmeasurements.size());
+            std::vector<std::shared_ptr<MeasurementFull>> measurements;
             for(const auto & tempmeasur:tempmeasurements)
                 measurements.push_back(tempmeasur);
             if(!measurements.empty()){
@@ -194,7 +194,7 @@ void MainWindow::on_tabWidget_currentChanged(int index){
                 ui->plot->graph()->data()->set(timeData);
                 // configure bottom axis to show date instead of number:
                 QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
-                dateTicker->setDateTimeFormat("d. MMMM\nyyyy");
+                dateTicker->setDateTimeFormat("d. MMMM yyyy \n hh:mm:ss");
                 ui->plot->xAxis->setTicker(dateTicker);
                 // configure left axis text labels:
                 QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
@@ -218,6 +218,7 @@ void MainWindow::on_tabWidget_currentChanged(int index){
                 // set axis ranges to show all data:
                 ui->plot->xAxis->setRange(measurements.front()->GetTime().toTime_t() , measurements.back()->GetTime().toTime_t());
                 ui->plot->yAxis->setRange(0, 700);
+                ui->plot->replot();
             }
         }
 #endif
