@@ -180,8 +180,9 @@ void MainWindow::on_tabWidget_currentChanged(int index){
             if(!measurements.empty()){
                 QMessageBox msg(this);
                 msg.setIcon(QMessageBox::Information);
-                msg.setText("Dane odczytane z czujników mogą się różnić w zależności od lokalizacji. Dodatkowo w tych samych warunkach czujniki zwracają inne wartości. Wyniki to z wbudowanych wad czujników");
+                msg.setText("Dane odczytane z czujników mogą się różnić w zależności od lokalizacji i warunków atmosferycznych.");
                 msg.setWindowTitle("Informacja o jakości pomiaru");
+                msg.setDetailedText("Odczyty pomiaró w z czujników w tych samych lokalizacjach mogą się różnić.");
                 msg.setStandardButtons(QMessageBox::Ok);
                 msg.exec();
                 // set locale to english, so we get english month names:
@@ -204,10 +205,10 @@ void MainWindow::on_tabWidget_currentChanged(int index){
                 ui->plot->xAxis->setTicker(dateTicker);
                 // configure left axis text labels:
                 QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-                textTicker->addTick(150, "green zone 150");
-                textTicker->addTick(250, "yellow zone 250");
-                textTicker->addTick(350, "red zone! 350");
-                textTicker->addTick(700, "700");
+                textTicker->addTick(200, "green zone 200");
+                textTicker->addTick(350, "yellow zone 350");
+                textTicker->addTick(450, "red zone! 450");
+                textTicker->addTick(700, "stalker zone!! 700");
                 ui->plot->yAxis->setTicker(textTicker);
                 // set a more compact font size for bottom and left axis tick labels:
                 ui->plot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));

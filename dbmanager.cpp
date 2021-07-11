@@ -47,21 +47,19 @@ void DBManager::run(){
         this->terminate();
     }
     ServerInstance * server=ServerInstance::GetInstance();
-    bool valid_sensor_id=false;
+    QSqlQuery query("Select DISTINCT Id from Sensors;");
     if(_db.isOpen()){
-        QSqlQuery query("Select DISTINCT Id from Sensors;");
         if(query.exec()){
-            valid_sensor_id=true;
             while(query.next()){
                 server->AddSensorId(query.value(0).toInt());
             }
         }
-    }
-    if(!valid_sensor_id){
-        QString log="ERROR: Can't get sensor id's from db";
-        qDebug()<<log;
-        LogContainer::GetInstance()->AddDBManagerLogs(log);
-        _window->AddLogToDBManager(log);
+        else{
+            QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+query.lastError().text();
+            qDebug()<<log;
+            LogContainer::GetInstance()->AddDBManagerLogs(log);
+            _window->AddLogToDBManager(log);
+        }
     }
     while(_db.isOpen()){
         QString cmd;

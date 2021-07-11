@@ -10,7 +10,7 @@
 #define SI_DEBUG
 //#define DBTEST
 ////autostart server
-//#define AUTO_START
+#define AUTO_START
 ////create plot from documentation
 //#define TEST_PLOT
 
