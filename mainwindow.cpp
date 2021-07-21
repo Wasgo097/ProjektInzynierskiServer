@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "serverinstance.h"
-#include "measurements.h"
+#include "measurementscontainer.h"
 #include "Global.h"
 #include "logcontainer.h"
 #include "logutilities.h"
@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 #ifdef AUTO_START
     on_StartBtn_clicked();
 #endif
+    TestMethod();
 }
 MainWindow::~MainWindow(){
     StopManager();
@@ -73,6 +74,9 @@ void MainWindow::StopManager(){
     if(_server_instance!=nullptr){
         _server_instance->StopDatabase();
     }
+}
+void MainWindow::TestMethod(){
+
 }
 void MainWindow::on_StartBtn_clicked(){
     QString serialport=ui->txt_serialport->toPlainText();
@@ -172,7 +176,7 @@ void MainWindow::on_tabWidget_currentChanged(int index){
         //valid device id and point count to graph
         if(bid==true&&bcount==true){
             //get Measurements as std list
-            auto tempmeasurements=Measurements::GetInstance()->GetMeasurements(id,count);
+            auto tempmeasurements=MeasurementsContainer::GetInstance()->GetMeasurements(id,count);
             //convert list to vector for [] operator
             std::vector<std::shared_ptr<MeasurementFull>> measurements;
             for(const auto & tempmeasur:tempmeasurements)

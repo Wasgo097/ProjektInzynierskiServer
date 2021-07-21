@@ -1,6 +1,6 @@
 #include "serverinstance.h"
 #include "mainwindow.h"
-#include "udplistener.h"
+#include "udpmanager.h"
 #include "seriallistener.h"
 #include "dbmanager.h"
 #include <algorithm>
@@ -8,7 +8,7 @@
 ServerInstance * ServerInstance::Instance=nullptr;
 ServerInstance::ServerInstance(MainWindow *Window,QString serialport):_window{Window}{
     _valid_sensor_id.Resource=std::shared_ptr<std::list<int>>(new std::list<int>);
-    _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+    _udplistener=std::shared_ptr<UdpManager>(new UdpManager(this->_window));
     _seriallistener=std::shared_ptr<SerialListener>(new SerialListener(this->_window,serialport));
     _dbManager=std::shared_ptr<DBManager>(new DBManager(this->_window));
 }
@@ -47,7 +47,7 @@ void ServerInstance::StartListeners(QString serialport){
         LogContainer::GetInstance()->AddServerLogs(log);
         _window->AddLogToServer(log);
 #endif
-        _udplistener=std::shared_ptr<UdpListener>(new UdpListener(this->_window));
+        _udplistener=std::shared_ptr<UdpManager>(new UdpManager(this->_window));
         _udplistener->start();
     }
     if(_seriallistener){

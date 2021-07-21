@@ -1,9 +1,11 @@
 #ifndef SERVERINSTANCE_H
 #define SERVERINSTANCE_H
+#include <QString>
 #include <memory>
 #include <list>
 #include "Global.h"
-class UdpListener;
+#include "measurements.h"
+class UdpManager;
 class DBManager;
 class SerialListener;
 class MainWindow;
@@ -28,7 +30,7 @@ protected:
     static ServerInstance * Instance;
 private:
     MainWindow * _window;
-    std::shared_ptr<UdpListener> _udplistener;
+    std::shared_ptr<UdpManager> _udplistener;
     std::shared_ptr<SerialListener> _seriallistener;
     std::shared_ptr<DBManager> _dbManager;
     ThreadingResourcesLight<Condition> _current_conditions;

@@ -1,11 +1,11 @@
 #include "seriallistener.h"
 #include "mainwindow.h"
-#include "measurements.h"
+#include "measurementscontainer.h"
 #include "serverinstance.h"
 #include <QSerialPortInfo>
 #include "logcontainer.h"
 SerialListener::SerialListener(MainWindow *Parent,QString serialport):QThread{Parent},_serial_port{serialport},_window{Parent}{
-    _measurements=Measurements::GetInstance();
+    _measurements=MeasurementsContainer::GetInstance();
 }
 SerialListener::~SerialListener(){
     qDebug()<<"~SerialListener";
@@ -92,7 +92,6 @@ void SerialListener::SerialReceived(){
         LogContainer::GetInstance()->AddSerialLogs(log);
         _window->AddLogToSerial(log);
 #endif
-#ifdef ADV_SERIAL_LISTENER
         auto list=line.split('|');
         if(list.size()==2){
             int Id,Data;
@@ -158,6 +157,5 @@ void SerialListener::SerialReceived(){
             LogContainer::GetInstance()->AddSerialLogs(log);
             _window->AddLogToSerial(log);
         }
-#endif
     }
 }

@@ -1,6 +1,6 @@
 #include "dbmanager.h"
 #include "mainwindow.h"
-#include "measurements.h"
+#include "measurementscontainer.h"
 #include "serverinstance.h"
 #include <algorithm>
 #include <QSqlQuery>
@@ -37,7 +37,7 @@ void DBManager::run(){
         qDebug()<<log;
         LogContainer::GetInstance()->AddDBManagerLogs(log);
         _window->AddLogToDBManager(log);
-        _measurements=Measurements::GetInstance();
+        _measurements=MeasurementsContainer::GetInstance();
     }
     else{
         QString log="DB Manager connecting unsuccessfully, end thread";
@@ -126,31 +126,29 @@ void DBManager::run(){
             }
         }
         if(cmd!=""){
-#ifdef ADV_MANAGER
             if(query.exec(cmd)){
-    #ifdef MANA_DEBUG
+#ifdef MANA_DEBUG
                 QString log="Data added to db";
                 qDebug()<<log;
                 LogContainer::GetInstance()->AddDBManagerLogs(log);
                 _window->AddLogToDBManager(log);
-    #endif
             }
             else{
                 QString log="ERROR WITH QUERY\n"+_db.lastError().text()+"\t"+query.lastError().text();
                 qDebug()<<log;
                 LogContainer::GetInstance()->AddDBManagerLogs(log);
                 _window->AddLogToDBManager(log);
+#endif
             }
-#endif
         }
-#ifdef GLOBAL_DEBUG
-        else{
-            QString log="CMD is null";
-            qDebug()<<log;
-            LogContainer::GetInstance()->AddDBManagerLogs(log);
-            _window->AddLogToDBManager(log);
-        }
-#endif
+//#ifdef GLOBAL_DEBUG
+//        else{
+//            QString log="CMD is null";
+//            qDebug()<<log;
+//            LogContainer::GetInstance()->AddDBManagerLogs(log);
+//            _window->AddLogToDBManager(log);
+//        }
+//#endif
     }
 #ifdef MANA_DEBUG
     QString log="DB closed";

@@ -6,7 +6,7 @@
 #include <QByteArray>
 #include <QDebug>
 class MainWindow;
-class Measurements;
+class MeasurementsContainer;
 class SerialListener : public QThread{
     Q_OBJECT
 public:
@@ -22,7 +22,7 @@ protected slots:
 private:
     std::shared_ptr<QSerialPort> _serial;
     QByteArray _serial_buffer;
-    Measurements * _measurements=nullptr;
+    MeasurementsContainer * _measurements=nullptr;
     QString _serial_port;
     MainWindow * _window=nullptr;
 };

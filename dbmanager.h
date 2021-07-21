@@ -7,8 +7,9 @@
 #include <QtSql>
 #include <QSqlDatabase>
 #include "Global.h"
+#include "measurements.h"
 class MainWindow;
-class Measurements;
+class MeasurementsContainer;
 class DBManager : public QThread{
     Q_OBJECT
 public:
@@ -21,7 +22,7 @@ protected:
     QSqlDatabase _db;
     std::list<std::shared_ptr<Measurement>> _measurement_buffer;
 private:
-    Measurements * _measurements=nullptr;
+    MeasurementsContainer * _measurements=nullptr;
     MainWindow * _window=nullptr;
 };
 #endif // DBMANAGER_H

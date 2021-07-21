@@ -15,10 +15,11 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     measurements.cpp \
+    measurementscontainer.cpp \
     qcustomplot.cpp \
     seriallistener.cpp \
     serverinstance.cpp \
-    udplistener.cpp
+    udpmanager.cpp
 
 HEADERS += \
     Global.h \
@@ -27,10 +28,11 @@ HEADERS += \
     logutilities.h \
     mainwindow.h \
     measurements.h \
+    measurementscontainer.h \
     qcustomplot.h \
     seriallistener.h \
     serverinstance.h \
-    udplistener.h
+    udpmanager.h
 
 FORMS += \
     mainwindow.ui

@@ -1,96 +1,57 @@
 #include "measurements.h"
-#include "serverinstance.h"
-#include "mainwindow.h"
-#include <QDebug>
-Measurements * Measurements::Instance=nullptr;
-Measurements *Measurements::GetInstance(ServerInstance* ServInst){
-    if(Instance==nullptr){
-        Instance=new Measurements(ServInst);
-    }
-    return Instance;
+
+
+QString Condition::ToQStr() const{
+    return QString::number(Temperature)+"|"+QString::number(Humidity);
 }
-Measurements *Measurements::GetInstance(){
-    if(Instance!=nullptr){
-        return Instance;
-    }
-    else{
-        Instance=new Measurements();
-        return Instance;
-    }
+
+bool Condition::Valid(){
+    return Temperature!=-1&&Humidity!=-1;
 }
-void Measurements::ClearInstance(){
-    if(Instance!=nullptr){
-        delete Instance;
-        Instance=nullptr;
-    }
+
+bool Condition::operator ==(const Condition &arg) const{
+    return this->Temperature==arg.Temperature&&this->Humidity==arg.Humidity;
 }
-std::shared_ptr<Measurement> Measurements::Pop(){
-    std::unique_lock<std::mutex> mlock(_mtx);
-    while (_buffer.empty()) {
-#ifdef MEAS_DEBUG
-        qDebug()<<"pop wait";
-#endif
-         _cv.wait(mlock);
-    }
-#ifdef MEAS_DEBUG
-    qDebug()<<"get go!";
-#endif
-    auto Item=_buffer.front();
-    _buffer.pop();
-    mlock.unlock();
-    _cv.notify_all();
-    return Item;
+
+bool Condition::operator !=(const Condition &arg) const{
+    return !(*this==arg);
 }
-void Measurements::Push(std::shared_ptr<Measurement> Item){
-    std::unique_lock<std::mutex> mlock(_mtx);
-    while (_buffer.size()>=100) {
-#ifdef MEAS_DEBUG
-        qDebug()<<"push wait";
-#endif
-         _cv.wait(mlock);
-    }
-#ifdef MEAS_DEBUG
-    qDebug()<<"push go";
-#endif
-    _buffer.push(Item);
-    mlock.unlock();
-    _cv.notify_all();
+
+Condition Condition::DefaultCondition(){
+    return Condition();
 }
-int Measurements::GetBufferSize(){
-    return BUFFER_SIZE;
+
+Measurement::Measurement(int Id, QDateTime Time):_deviceID{Id},_time{Time}{}
+
+QDateTime Measurement::GetTime() const{return _time;}
+
+MeasurementSlave::MeasurementSlave(int Id, QDateTime Time, int Data):Measurement{Id,Time},_data{Data}{}
+
+QString MeasurementSlave::GetMeasurement() const{
+    return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data);
 }
-std::list<std::shared_ptr<MeasurementFull>> Measurements::GetMeasurements(int deviceid,int count){
-    std::list<std::shared_ptr<MeasurementFull>> temp;
-    _current_measurements.Resource_mtx.lock();
-    int tempcount=0;
-    //add element from end to begin
-    for (auto it=_current_measurements.Resource->rbegin(); it!=_current_measurements.Resource->rend(); ++it){
-        if((*it)->_deviceID==deviceid){
-            temp.push_back(*it);
-            tempcount++;
-            if(tempcount==count)
-                break;
-        }
-    }
-    _current_measurements.Resource_mtx.unlock();
-    return temp;
+
+MeasuremntType MeasurementSlave::GetMeasurementType() const{
+    return MeasuremntType::Slave;
 }
-void Measurements::AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement){
-    int count=0;
-    _current_measurements.Resource_mtx.lock();
-    _current_measurements.Resource->push_back(Measurement);
-    count=_current_measurements.Resource->size();
-    _current_measurements.Resource_mtx.unlock();
-    if(_server_instance!=nullptr){
-        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
-    }
-    else if((_server_instance=ServerInstance::GetInstance())!=nullptr){
-        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
-    }
+
+MeasurementMaster::MeasurementMaster(int Id, QDateTime Time, Condition Condition):Measurement{Id,Time},_condition{Condition}{}
+
+QString MeasurementMaster::GetMeasurement() const{
+    return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+_condition.ToQStr();
 }
-Measurements::Measurements(ServerInstance *ServInst):_server_instance{ServInst}{
-    _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+
+MeasuremntType MeasurementMaster::GetMeasurementType() const{
+    return MeasuremntType::Master;
 }
-Measurements::Measurements(){
-    _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+
+MeasurementFull::MeasurementFull(int Id, QDateTime Time, int Data, Condition Condition):Measurement(Id,Time),MeasurementSlave(Id,Time,Data),MeasurementMaster(Id,Time,Condition){
+}
+
+QString MeasurementFull::GetMeasurement() const{
+    return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data)+"|"+_condition.ToQStr();
+}
+
+MeasuremntType MeasurementFull::GetMeasurementType() const{
+    return MeasuremntType::Full;
 }

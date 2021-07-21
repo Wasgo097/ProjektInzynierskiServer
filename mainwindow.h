@@ -33,5 +33,6 @@ private:
     void StopListeners();
     void StarManager();
     void StopManager();
+    void TestMethod();
 };
 #endif // MAINWINDOW_H

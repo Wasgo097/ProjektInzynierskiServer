@@ -1,17 +1,17 @@
-#ifndef UDPLISTENER_H
-#define UDPLISTENER_H
+#ifndef UDPMANAGER_H
+#define UDPMANAGER_H
 #include <QThread>
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QDateTime>
 #include <QDebug>
 class MainWindow;
-class Measurements;
-class UdpListener : public QThread{
+class MeasurementsContainer;
+class UdpManager : public QThread{
     Q_OBJECT
 public:
-    explicit UdpListener(MainWindow * Parent=nullptr);
-    virtual ~UdpListener();
+    explicit UdpManager(MainWindow * Parent=nullptr);
+    virtual ~UdpManager();
 protected slots:
     void ReadyRead();
 protected:
@@ -21,6 +21,7 @@ private:
     QUdpSocket _socket;
     QByteArray _udp_buffer;
     const quint16 PORT=7654;
-    Measurements * _measurements=nullptr;
+    MeasurementsContainer * _measurements=nullptr;
+    QString _localIp;
 };
-#endif // UDPLISTENER_H
+#endif // UDPMANAGER_H
