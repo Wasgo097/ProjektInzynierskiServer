@@ -7,6 +7,7 @@
 #include <QPluginLoader>
 #include <QVariant>
 #include "logcontainer.h"
+#include "sensor.h"
 DBManager::DBManager(MainWindow * Parent):QThread{Parent},_window{Parent}{
 }
 DBManager::~DBManager(){
@@ -45,21 +46,37 @@ void DBManager::run(){
         LogContainer::GetInstance()->AddDBManagerLogs(log);
         _window->AddLogToDBManager(log);
         this->terminate();
+        return;
     }
     ServerInstance * server=ServerInstance::GetInstance();
-    QSqlQuery query("Select DISTINCT Id from Sensors;");
-    if(_db.isOpen()){
-        if(query.exec()){
-            while(query.next()){
-                server->AddSensorId(query.value(0).toInt());
+    QSqlQuery queryid("Select DISTINCT Id from Sensors;");
+    //if(_db.isOpen()){
+        if(queryid.exec()){
+            while(queryid.next()){
+                server->AddSensorId(queryid.value(0).toInt());
             }
         }
         else{
-            QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+query.lastError().text();
+            QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
             qDebug()<<log;
             LogContainer::GetInstance()->AddDBManagerLogs(log);
             _window->AddLogToDBManager(log);
         }
+   // }
+    QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
+    if(queryid.exec()){
+        while(queryid.next()){
+            int id=queryid.value(0).toInt();
+            std::string type=queryid.value(1).toString().toStdString();
+            std::string mac=queryid.value(2).toString().toStdString();
+            Sensor sensor(id,type,mac);
+        }
+    }
+    else{
+        QString log="ERROR: Can't get sensors from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
+        qDebug()<<log;
+        LogContainer::GetInstance()->AddDBManagerLogs(log);
+        _window->AddLogToDBManager(log);
     }
     while(_db.isOpen()){
         QString cmd;

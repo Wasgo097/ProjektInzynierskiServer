@@ -17,6 +17,7 @@ SOURCES += \
     measurements.cpp \
     measurementscontainer.cpp \
     qcustomplot.cpp \
+    sensor.cpp \
     seriallistener.cpp \
     serverinstance.cpp \
     udpmanager.cpp
@@ -30,6 +31,7 @@ HEADERS += \
     measurements.h \
     measurementscontainer.h \
     qcustomplot.h \
+    sensor.h \
     seriallistener.h \
     serverinstance.h \
     udpmanager.h
@@ -44,4 +46,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     Database.db \
+    DatabaseClear.db \
     DatabaseCopy.db

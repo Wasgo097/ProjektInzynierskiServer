@@ -9,6 +9,7 @@ class UdpManager;
 class DBManager;
 class SerialListener;
 class MainWindow;
+class Sensor;
 class ServerInstance{
 public:
     ServerInstance(const ServerInstance & Other)=delete;
@@ -23,7 +24,9 @@ public:
     void SetConditions(Condition src);
     Condition GetConditions()const;
     void AddSensorId(int Id);
+    void AddSensor(Sensor sensor);
     bool CheckSensorId(int Id);
+    int IptoId(std::string ip);
     MainWindow * GLOBAL_GET_WINDOW();
 protected:
     ServerInstance(MainWindow * Window,QString serialport);
@@ -35,5 +38,6 @@ private:
     std::shared_ptr<DBManager> _dbManager;
     ThreadingResourcesLight<Condition> _current_conditions;
     ThreadingResources<std::list<int>> _valid_sensor_id;
+    ThreadingResources<std::list<Sensor>> _sensors;
 };
 #endif // SERVERINSTANCE_H

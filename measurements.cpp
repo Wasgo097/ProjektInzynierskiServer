@@ -21,11 +21,17 @@ Condition Condition::DefaultCondition(){
     return Condition();
 }
 
-Measurement::Measurement(int Id, QDateTime Time):_deviceID{Id},_time{Time}{}
+Measurement::Measurement(int Id, QDateTime Time):_deviceID{Id},_time{Time}{
 
-QDateTime Measurement::GetTime() const{return _time;}
+}
 
-MeasurementSlave::MeasurementSlave(int Id, QDateTime Time, int Data):Measurement{Id,Time},_data{Data}{}
+QDateTime Measurement::GetTime() const{
+    return _time;
+}
+
+MeasurementSlave::MeasurementSlave(int Id, QDateTime Time, int Data):Measurement{Id,Time},_data{Data}{
+
+}
 
 QString MeasurementSlave::GetMeasurement() const{
     return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+QString::number(_data);
@@ -35,7 +41,9 @@ MeasuremntType MeasurementSlave::GetMeasurementType() const{
     return MeasuremntType::Slave;
 }
 
-MeasurementMaster::MeasurementMaster(int Id, QDateTime Time, Condition Condition):Measurement{Id,Time},_condition{Condition}{}
+MeasurementMaster::MeasurementMaster(int Id, QDateTime Time, Condition Condition):Measurement{Id,Time},_condition{Condition}{
+
+}
 
 QString MeasurementMaster::GetMeasurement() const{
     return QString::number(_deviceID)+"|"+_time.toString(Qt::DateFormat::ISODate)+"|"+_condition.ToQStr();
@@ -46,6 +54,7 @@ MeasuremntType MeasurementMaster::GetMeasurementType() const{
 }
 
 MeasurementFull::MeasurementFull(int Id, QDateTime Time, int Data, Condition Condition):Measurement(Id,Time),MeasurementSlave(Id,Time,Data),MeasurementMaster(Id,Time,Condition){
+
 }
 
 QString MeasurementFull::GetMeasurement() const{

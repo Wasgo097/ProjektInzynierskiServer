@@ -75,8 +75,10 @@ void MeasurementsContainer::AddValidMeasurment(std::shared_ptr<MeasurementFull> 
     }
 }
 MeasurementsContainer::MeasurementsContainer(ServerInstance *ServInst):_server_instance{ServInst}{
-    _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+    //_current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+    _current_measurements.Resource=std::make_shared<std::list<std::shared_ptr<MeasurementFull>>>();
 }
 MeasurementsContainer::MeasurementsContainer(){
-    _current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+    //_current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+    _current_measurements.Resource=std::make_shared<std::list<std::shared_ptr<MeasurementFull>>>();
 }

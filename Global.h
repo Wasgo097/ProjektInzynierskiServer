@@ -4,8 +4,8 @@
 #define GLOBAL_DEBUG
 #define MANA_DEBUG
 #define SI_DEBUG
-//#define DBTEST
-////autostart server
+#define DBTEST
+//autostart server
 #define AUTO_START
 
 #include <mutex>

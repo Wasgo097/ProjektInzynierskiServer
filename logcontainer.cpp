@@ -7,7 +7,8 @@
 #include <string>
 LogContainer * LogContainer::Instance=nullptr;
 LogContainer::LogContainer(){
-    _logs.Resource=std::shared_ptr<Logs>(new Logs);
+    //_logs.Resource=std::shared_ptr<Logs>(new Logs);
+    _logs.Resource=std::make_shared<Logs>();
 }
 LogContainer *LogContainer::GetInstance(){
     if(Instance!=nullptr){
