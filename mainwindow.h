@@ -29,7 +29,7 @@ private:
     std::unique_ptr<ServerInstance>_server;
     std::mutex _ui_mtx;
 private:
-    void StartListeners(const QString &serialport);
+    void StartListeners();
     void StopListeners();
     void StarManager();
     void StopManager();

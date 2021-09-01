@@ -5,7 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <memory>
-#include "measurements.h"
+#include "measurement.h"
 #include "Global.h"
 class ServerInstance;
 class MeasurementsContainer{
@@ -17,10 +17,11 @@ public:
     void Push(std::shared_ptr<Measurement> Item);
     const int & GetBufferSize();
     void SetBufferSize(int value);
-    std::list<std::shared_ptr<MeasurementFull>> GetMeasurements(int deviceid,int count);
+    std::list<std::shared_ptr<MeasurementFull>> GetMeasurementsForPlotting(int deviceid,int count);
     void AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement);
+    virtual ~MeasurementsContainer()=default;
 private:
-    ServerInstance & _server_instance;
+    ServerInstance & _server;
     int _BUFFER_SIZE=100;
     std::queue<std::shared_ptr<Measurement>> _buffer;
     ThreadingResources<std::list<std::shared_ptr<MeasurementFull>>> _current_measurements;

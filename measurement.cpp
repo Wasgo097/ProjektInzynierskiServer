@@ -1,4 +1,4 @@
-#include "measurements.h"
+#include "measurement.h"
 
 
 QString Condition::ToQStr() const{

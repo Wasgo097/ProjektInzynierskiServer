@@ -18,6 +18,7 @@ class Logs{
     std::list<std::shared_ptr<QString>> DBManagerLogs;
     std::list<std::shared_ptr<QString>> ServerLogs;
 public:
+    virtual ~Logs()=default;
     void AddUdpLogs(QString log);
     void AddSerialLogs(QString log);
     void AddDBManagerLogs(QString log);

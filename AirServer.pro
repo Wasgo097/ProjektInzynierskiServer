@@ -14,7 +14,7 @@ SOURCES += \
     logutilities.cpp \
     main.cpp \
     mainwindow.cpp \
-    measurements.cpp \
+    measurement.cpp \
     measurementscontainer.cpp \
     qcustomplot.cpp \
     sensor.cpp \
@@ -28,7 +28,7 @@ HEADERS += \
     logcontainer.h \
     logutilities.h \
     mainwindow.h \
-    measurements.h \
+    measurement.h \
     measurementscontainer.h \
     qcustomplot.h \
     sensor.h \

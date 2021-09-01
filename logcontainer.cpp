@@ -1,52 +1,44 @@
 #include "logcontainer.h"
+#include "serverinstance.h"
 #include <QDateTime>
 #include <QString>
 #include <QDebug>
 #include <iostream>
 #include <fstream>
 #include <string>
-LogContainer::LogContainer(){
+LogContainer::LogContainer(ServerInstance &server):_server(server){
     _logs.Resource=std::make_shared<Logs>();
 }
 void LogContainer::AddUdpLogs(QString log){
-    _logs.Resource_mtx.lock();
+    std::lock_guard lock(_logs.Resource_mtx);
     _logs.Resource->AddUdpLogs(log);
-    _logs.Resource_mtx.unlock();
 }
 void LogContainer::AddSerialLogs(QString log){
-    _logs.Resource_mtx.lock();
+    std::lock_guard lock(_logs.Resource_mtx);
     _logs.Resource->AddSerialLogs(log);
-    _logs.Resource_mtx.unlock();
 }
 void LogContainer::AddDBManagerLogs(QString log){
-    _logs.Resource_mtx.lock();
+    std::lock_guard lock(_logs.Resource_mtx);
     _logs.Resource->AddDBManagerLogs(log);
-    _logs.Resource_mtx.unlock();
 }
 void LogContainer::AddServerLogs(QString log){
-    _logs.Resource_mtx.lock();
+    std::lock_guard lock(_logs.Resource_mtx);
     _logs.Resource->AddServerLogs(log);
-    _logs.Resource_mtx.unlock();
 }
 void LogContainer::SaveLog(LogType Type){
-    _logs.Resource_mtx.lock();
+    std::lock_guard lock(_logs.Resource_mtx);
     QString DateTime=QDateTime::currentDateTime().toString("dd MM yyyy hh mm ss");
     std::string file_name=DateTime.toStdString()+"_log.txt";
-    if(Type==LogType::All){
+    if(Type==LogType::All)
         file_name="All_"+file_name;
-    }
-    else if (Type==LogType::Serial) {
+    else if (Type==LogType::Serial)
         file_name="Serial_"+file_name;
-    }
-    else if (Type==LogType::Server) {
+    else if (Type==LogType::Server)
         file_name="Server_"+file_name;
-    }
-    else if(Type==LogType::Udp){
+    else if(Type==LogType::Udp)
         file_name="Udp"+file_name;
-    }
-    else{
+    else
         file_name="DBManager_"+file_name;
-    }
     file_name="logs\\"+file_name;
     std::fstream file;
     file.open(file_name.c_str(),std::fstream::out);
@@ -76,12 +68,10 @@ void LogContainer::SaveLog(LogType Type){
                 file<<log->toStdString()<<std::endl;
             }
         }
+        _server.AddServerLog("Create new log file "+QString::fromStdString(file_name));
         file.close();
     }
-#ifdef LogDebug
     else{
-        qDebug()<<"Error: Cant create log file";
+        _server.AddServerLog("Error: Cant create log file!!");
     }
-#endif
-    _logs.Resource_mtx.unlock();
 }

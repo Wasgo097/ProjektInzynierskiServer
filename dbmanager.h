@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QtSql>
 #include <QSqlDatabase>
-#include "measurements.h"
+#include "measurement.h"
 class MainWindow;
 class ServerInstance;
 class MeasurementsContainer;

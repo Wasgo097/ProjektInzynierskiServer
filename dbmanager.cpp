@@ -42,30 +42,29 @@ void DBManager::run(){
         return;
     }
     QSqlQuery queryid("Select DISTINCT Id from Sensors;");
-    //if(_db.isOpen()){
-        if(queryid.exec()){
-            while(queryid.next()){
-                _server.AddSensorId(queryid.value(0).toInt());
-            }
-        }
-        else{
-            QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
-            DBManagerDebug(log)
-        }
-   // }
-    //QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
     if(queryid.exec()){
         while(queryid.next()){
-            int id=queryid.value(0).toInt();
-            std::string type=queryid.value(1).toString().toStdString();
-            std::string mac=queryid.value(2).toString().toStdString();
-            Sensor sensor(id,type,mac);
+            _server.AddSensorId(queryid.value(0).toInt());
         }
     }
     else{
-        QString log="ERROR: Can't get sensors from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
+        QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
         DBManagerDebug(log)
     }
+    //to do during added mac functionality
+//    QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
+//    if(queryid.exec()){
+//        while(queryid.next()){
+//            int id=queryid.value(0).toInt();
+//            std::string type=queryid.value(1).toString().toStdString();
+//            std::string mac=queryid.value(2).toString().toStdString();
+//            Sensor sensor(id,type,mac);
+//        }
+//    }
+//    else{
+//        QString log="ERROR: Can't get sensors from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
+//        DBManagerDebug(log)
+//    }
     while(_db.isOpen()){
         QString cmd;
         ////params descriptions in doc

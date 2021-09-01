@@ -39,7 +39,7 @@ void SerialListener::run(){
                 QString log="Serial Listener closed";
                 SerialDebug(log)
             }
-        }
+        }        
     }
 }
 void SerialListener::SetSerialParams(){

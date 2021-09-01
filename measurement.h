@@ -1,5 +1,5 @@
-#ifndef MEASUREMENTS_H
-#define MEASUREMENTS_H
+#ifndef MEASUREMENT_H
+#define MEASUREMENT_H
 #include <QString>
 #include <QDateTime>
 struct Condition{
@@ -30,7 +30,7 @@ protected:
 public:
     virtual QString GetMeasurement()const=0;
     virtual MeasuremntType GetMeasurementType()const=0;
-    virtual ~Measurement(){}
+    virtual ~Measurement()=default;
     QDateTime GetTime()const;
 };
 
@@ -42,7 +42,7 @@ public:
     MeasurementSlave(int Id,QDateTime Time,int Data);
     virtual QString GetMeasurement()const override;
     virtual MeasuremntType GetMeasurementType() const override;
-    virtual ~MeasurementSlave(){}
+    virtual ~MeasurementSlave()=default;
     int GetData()const{return _data;}
 };
 
@@ -54,7 +54,7 @@ public:
     MeasurementMaster(int Id,QDateTime Time,Condition Condition);
     virtual QString GetMeasurement()const override;
     virtual MeasuremntType GetMeasurementType() const override;
-    virtual ~MeasurementMaster(){}
+    virtual ~MeasurementMaster()=default;
     Condition GetCondition()const{return _condition;}
 };
 
@@ -64,7 +64,7 @@ public:
     MeasurementFull(int Id,QDateTime Time,int Data,Condition Condition);
     virtual QString GetMeasurement()const override;
     virtual MeasuremntType GetMeasurementType() const override;
-    virtual ~MeasurementFull(){}
+    virtual ~MeasurementFull()=default;
 };
 
-#endif // MEASUREMENTS_H
+#endif // MEASUREMENT_H
