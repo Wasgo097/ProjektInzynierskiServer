@@ -5,25 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-LogContainer * LogContainer::Instance=nullptr;
 LogContainer::LogContainer(){
-    //_logs.Resource=std::shared_ptr<Logs>(new Logs);
     _logs.Resource=std::make_shared<Logs>();
-}
-LogContainer *LogContainer::GetInstance(){
-    if(Instance!=nullptr){
-        return Instance;
-    }
-    else{
-        Instance=new LogContainer;
-        return Instance;
-    }
-}
-void LogContainer::ClearInstance(){
-    if(Instance!=nullptr){
-        delete Instance;
-        Instance=nullptr;
-    }
 }
 void LogContainer::AddUdpLogs(QString log){
     _logs.Resource_mtx.lock();
@@ -95,7 +78,7 @@ void LogContainer::SaveLog(LogType Type){
         }
         file.close();
     }
-#ifdef GLOBAL_DEBUG
+#ifdef LogDebug
     else{
         qDebug()<<"Error: Cant create log file";
     }

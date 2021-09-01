@@ -12,22 +12,16 @@ class MeasurementsContainer{
 public:
     MeasurementsContainer(const MeasurementsContainer & Other)=delete;
     void operator =(const MeasurementsContainer & Other)=delete;
-    static MeasurementsContainer * GetInstance(ServerInstance *ServInst);
-    static MeasurementsContainer * GetInstance();
-    static void ClearInstance();
-public:
+    MeasurementsContainer(ServerInstance & ServInst,const int BUFFER_SIZE=100);
     std::shared_ptr<Measurement> Pop();
     void Push(std::shared_ptr<Measurement> Item);
-    static int GetBufferSize();
+    const int & GetBufferSize();
+    void SetBufferSize(int value);
     std::list<std::shared_ptr<MeasurementFull>> GetMeasurements(int deviceid,int count);
     void AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement);
-protected:
-    MeasurementsContainer(ServerInstance * ServInst);
-    MeasurementsContainer();
-    static MeasurementsContainer * Instance;
-    static const int BUFFER_SIZE=100;
 private:
-    ServerInstance * _server_instance=nullptr;
+    ServerInstance & _server_instance;
+    int _BUFFER_SIZE=100;
     std::queue<std::shared_ptr<Measurement>> _buffer;
     ThreadingResources<std::list<std::shared_ptr<MeasurementFull>>> _current_measurements;
     std::mutex _mtx;

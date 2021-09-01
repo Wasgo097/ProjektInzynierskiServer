@@ -2,28 +2,6 @@
 #include "serverinstance.h"
 #include "mainwindow.h"
 #include <QDebug>
-MeasurementsContainer * MeasurementsContainer::Instance=nullptr;
-MeasurementsContainer *MeasurementsContainer::GetInstance(ServerInstance* ServInst){
-    if(Instance==nullptr){
-        Instance=new MeasurementsContainer(ServInst);
-    }
-    return Instance;
-}
-MeasurementsContainer *MeasurementsContainer::GetInstance(){
-    if(Instance!=nullptr){
-        return Instance;
-    }
-    else{
-        Instance=new MeasurementsContainer();
-        return Instance;
-    }
-}
-void MeasurementsContainer::ClearInstance(){
-    if(Instance!=nullptr){
-        delete Instance;
-        Instance=nullptr;
-    }
-}
 std::shared_ptr<Measurement> MeasurementsContainer::Pop(){
     std::unique_lock<std::mutex> mlock(_mtx);
     while (_buffer.empty())
@@ -36,14 +14,17 @@ std::shared_ptr<Measurement> MeasurementsContainer::Pop(){
 }
 void MeasurementsContainer::Push(std::shared_ptr<Measurement> Item){
     std::unique_lock<std::mutex> mlock(_mtx);
-    while (_buffer.size()>=BUFFER_SIZE)
+    while (_buffer.size()>=_BUFFER_SIZE)
          _cv.wait(mlock);
     _buffer.push(Item);
     mlock.unlock();
     _cv.notify_all();
 }
-int MeasurementsContainer::GetBufferSize(){
-    return BUFFER_SIZE;
+const int &MeasurementsContainer::GetBufferSize(){
+    return _BUFFER_SIZE;
+}
+void MeasurementsContainer::SetBufferSize(int value){
+    _BUFFER_SIZE=value;
 }
 std::list<std::shared_ptr<MeasurementFull>> MeasurementsContainer::GetMeasurements(int deviceid,int count){
     std::list<std::shared_ptr<MeasurementFull>> temp;
@@ -62,23 +43,18 @@ std::list<std::shared_ptr<MeasurementFull>> MeasurementsContainer::GetMeasuremen
     return temp;
 }
 void MeasurementsContainer::AddValidMeasurment(std::shared_ptr<MeasurementFull> Measurement){
-    int count=0;
-    _current_measurements.Resource_mtx.lock();
-    _current_measurements.Resource->push_back(Measurement);
-    count=_current_measurements.Resource->size();
-    _current_measurements.Resource_mtx.unlock();
-    if(_server_instance!=nullptr){
-        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
-    }
-    else if((_server_instance=ServerInstance::GetInstance())!=nullptr){
-        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
-    }
+//    int count=0;
+//    _current_measurements.Resource_mtx.lock();
+//    _current_measurements.Resource->push_back(Measurement);
+//    count=_current_measurements.Resource->size();
+//    _current_measurements.Resource_mtx.unlock();
+//    if(_server_instance!=nullptr){
+//        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
+//    }
+//    else if((_server_instance=ServerInstance::GetInstance())!=nullptr){
+//        _server_instance->GLOBAL_GET_WINDOW()->SetMeasurementsCount(count);
+//    }
 }
-MeasurementsContainer::MeasurementsContainer(ServerInstance *ServInst):_server_instance{ServInst}{
-    //_current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
-    _current_measurements.Resource=std::make_shared<std::list<std::shared_ptr<MeasurementFull>>>();
-}
-MeasurementsContainer::MeasurementsContainer(){
-    //_current_measurements.Resource=std::shared_ptr<std::list<std::shared_ptr<MeasurementFull>>>(new std::list<std::shared_ptr<MeasurementFull>>);
+MeasurementsContainer::MeasurementsContainer(ServerInstance & ServInst,const int BUFFER_SIZE):_server_instance{ServInst},_BUFFER_SIZE{BUFFER_SIZE}{
     _current_measurements.Resource=std::make_shared<std::list<std::shared_ptr<MeasurementFull>>>();
 }

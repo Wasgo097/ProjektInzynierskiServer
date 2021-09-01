@@ -1,9 +1,13 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
-
-#define GLOBAL_DEBUG
-#define MANA_DEBUG
-#define SI_DEBUG
+//todo remove
+//#define GLOBAL_DEBUG
+#define DBManagerDebug
+#define ServerDebug
+#define UDPDebug
+#define SerialDebug
+#define LogDebug
+//use test database
 #define DBTEST
 //autostart server
 #define AUTO_START

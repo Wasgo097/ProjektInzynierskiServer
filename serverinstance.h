@@ -5,37 +5,35 @@
 #include <list>
 #include "Global.h"
 #include "measurements.h"
-class UdpManager;
-class DBManager;
-class SerialListener;
+#include "udpmanager.h"
+#include "seriallistener.h"
+#include "dbmanager.h"
+#include "measurementscontainer.h"
+#include "logcontainer.h"
 class MainWindow;
 class Sensor;
 class ServerInstance{
 public:
     ServerInstance(const ServerInstance & Other)=delete;
     void operator =(const ServerInstance & Other)=delete;
-    static ServerInstance *GetInstance(MainWindow * Window,QString serialport);
-    static ServerInstance *GetInstance();
-    static void ClearInstance();
-    void StartListeners(QString serialport);
+    ServerInstance(MainWindow &window,const QString & serialport,const quint16& port);
+    void StartListeners(const QString &serialport);
     void StopListeners();
     void StartDatabase();
     void StopDatabase();
     void SetConditions(Condition src);
     Condition GetConditions()const;
     void AddSensorId(int Id);
-    void AddSensor(Sensor sensor);
     bool CheckSensorId(int Id);
-    int IptoId(std::string ip);
-    MainWindow * GLOBAL_GET_WINDOW();
-protected:
-    ServerInstance(MainWindow * Window,QString serialport);
-    static ServerInstance * Instance;
+    //void AddSensor(Sensor sensor);
+    //int IptoId(std::string ip);
 private:
-    MainWindow * _window;
-    std::shared_ptr<UdpManager> _udplistener;
-    std::shared_ptr<SerialListener> _seriallistener;
-    std::shared_ptr<DBManager> _dbManager;
+    MainWindow & _window;
+    std::unique_ptr<UdpManager> _udpmanager;
+    std::unique_ptr<SerialListener> _seriallistener;
+    std::unique_ptr<DBManager> _dbManager;
+    std::unique_ptr<MeasurementsContainer> _measurements;
+    std::unique_ptr<LogContainer> _log;
     ThreadingResourcesLight<Condition> _current_conditions;
     ThreadingResources<std::list<int>> _valid_sensor_id;
     ThreadingResources<std::list<Sensor>> _sensors;

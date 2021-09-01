@@ -26,13 +26,12 @@ private slots:
 
 private:
     Ui::MainWindow *ui=nullptr;
-    ServerInstance *_server_instance=nullptr;
+    std::unique_ptr<ServerInstance>_server;
     std::mutex _ui_mtx;
 private:
-    void StartListeners(QString serialport);
+    void StartListeners(const QString &serialport);
     void StopListeners();
     void StarManager();
     void StopManager();
-    void TestMethod();
 };
 #endif // MAINWINDOW_H

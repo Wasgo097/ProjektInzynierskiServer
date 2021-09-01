@@ -4,8 +4,8 @@
 #include "serverinstance.h"
 #include <QSerialPortInfo>
 #include "logcontainer.h"
-SerialListener::SerialListener(MainWindow *Parent,QString serialport):QThread{Parent},_serial_port{serialport},_window{Parent}{
-    _measurements=MeasurementsContainer::GetInstance();
+SerialListener::SerialListener(MainWindow &window,ServerInstance& server,MeasurementsContainer& measurements_container, LogContainer & log,const QString & serialport):QThread{&window},_window{window},
+    _server{server},_measurements{measurements_container},_log{log},_serial_port{serialport}{
 }
 SerialListener::~SerialListener(){
     qDebug()<<"~SerialListener";
@@ -13,11 +13,11 @@ SerialListener::~SerialListener(){
     // disconnect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
 }
 void SerialListener::Quit(){
-#ifdef GLOBAL_DEBUG
+#ifdef SerialDebug
     QString log="SerialListener quit";
     qDebug()<<log;
-    LogContainer::GetInstance()->AddSerialLogs(log);
-    _window->AddLogToSerial(log);
+    _log.AddSerialLogs(log);
+    _window.AddLogToSerial(log);
 #endif
     terminate();
     quit();
@@ -30,8 +30,8 @@ void SerialListener::run(){
             if(_serial->open(QIODevice::ReadWrite)){
                 QString log="Serial Listener opening successfully";
                 qDebug()<<log;
-                LogContainer::GetInstance()->AddSerialLogs(log);
-                _window->AddLogToSerial(log);
+                _log.AddSerialLogs(log);
+                _window.AddLogToSerial(log);
                 //connect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
             }
         }
@@ -44,8 +44,8 @@ void SerialListener::run(){
                 _serial->close();
                 QString log="Serial Listener closed";
                 qDebug()<<log;
-                LogContainer::GetInstance()->AddSerialLogs(log);
-                _window->AddLogToSerial(log);
+                _log.AddSerialLogs(log);
+                _window.AddLogToSerial(log);
             }
         }
     }
@@ -86,11 +86,11 @@ void SerialListener::SerialReceived(){
             line=templist[0];
             _serial_buffer="";
         }
-#ifdef GLOBAL_DEBUG
+#ifdef SerialDebug
         QString log="SERIAL LISTENER READ: "+line+" date "+date.toString(Qt::DateFormat::ISODate);
         qDebug()<<log;
-        LogContainer::GetInstance()->AddSerialLogs(log);
-        _window->AddLogToSerial(log);
+        _log.AddSerialLogs(log);
+        _window.AddLogToSerial(log);
 #endif
         auto list=line.split('|');
         if(list.size()==2){
@@ -99,25 +99,25 @@ void SerialListener::SerialReceived(){
             Id=list[0].toInt(&bId);
             Data=list[1].toUInt(&bData);
             if(bId&&bData){
-                if(ServerInstance::GetInstance()->CheckSensorId(Id)){
+                if(_server.CheckSensorId(Id)){
                     Measurement * slavemeasurement=new MeasurementSlave(Id,date, Data);
                     std::shared_ptr<Measurement> ptr(slavemeasurement);
-                    _measurements->Push(ptr);
+                    _measurements.Push(ptr);
                 }
-#ifdef GLOBAL_DEBUG
+#ifdef SerialDebug
                 else{
                     QString log="Sensor Id is invalid";
                     qDebug()<<log;
-                    LogContainer::GetInstance()->AddSerialLogs(log);
-                    _window->AddLogToSerial(log);
+                    _log.AddSerialLogs(log);
+                    _window.AddLogToSerial(log);
                 }
 #endif
             }
             else{
                 QString log="Error with convert qstring to int(slave) serial";
                 qDebug()<<log;
-                LogContainer::GetInstance()->AddSerialLogs(log);
-                _window->AddLogToSerial(log);
+                _log.AddSerialLogs(log);
+                _window.AddLogToSerial(log);
             }
 
         }
@@ -128,34 +128,34 @@ void SerialListener::SerialReceived(){
             Temperature=list[1].toInt(&bTemperature);
             Humidity=list[2].toInt(&bHumidity);
             if(bId&&bTemperature&&bHumidity){
-                if(ServerInstance::GetInstance()->CheckSensorId(Id)){
+                if(_server.CheckSensorId(Id)){
                     Condition temp(Temperature,Humidity);
-                    ServerInstance::GetInstance()->SetConditions(temp);
+                    _server.SetConditions(temp);
                     Measurement * mastermeasurement=new MeasurementMaster(Id,date,temp);
                     std::shared_ptr<Measurement> ptr(mastermeasurement);
-                    _measurements->Push(ptr);
+                    _measurements.Push(ptr);
                 }
-#ifdef GLOBAL_DEBUG
+#ifdef SerialDebug
                 else{
                     QString log="Sensor Id is invalid";
                     qDebug()<<log;
-                    LogContainer::GetInstance()->AddSerialLogs(log);
-                    _window->AddLogToSerial(log);
+                    _log.AddSerialLogs(log);
+                    _window.AddLogToSerial(log);
                 }
 #endif
             }
             else{
                 QString log="Error with convert qstring to int(master) serial";
                 qDebug()<<log;
-                LogContainer::GetInstance()->AddSerialLogs(log);
-                _window->AddLogToSerial(log);
+                _log.AddSerialLogs(log);
+                _window.AddLogToSerial(log);
             }
         }
         else{
             QString log="Server read invalid data from serial";
             qDebug()<<log;
-            LogContainer::GetInstance()->AddSerialLogs(log);
-            _window->AddLogToSerial(log);
+            _log.AddSerialLogs(log);
+            _window.AddLogToSerial(log);
         }
     }
 }

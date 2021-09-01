@@ -3,17 +3,18 @@
 #include <memory>
 #include <list>
 #include <QThread>
-#include <QDebug>
 #include <QtSql>
 #include <QSqlDatabase>
-#include "Global.h"
 #include "measurements.h"
 class MainWindow;
+class ServerInstance;
 class MeasurementsContainer;
+class Measurement;
+class LogContainer;
 class DBManager : public QThread{
     Q_OBJECT
 public:
-    explicit DBManager(MainWindow * Parent=nullptr);
+    DBManager(MainWindow &window,ServerInstance& server,MeasurementsContainer& measurements_container, LogContainer & log);
     virtual ~DBManager();
     void Quit();
 protected:
@@ -22,7 +23,9 @@ protected:
     QSqlDatabase _db;
     std::list<std::shared_ptr<Measurement>> _measurement_buffer;
 private:
-    MeasurementsContainer * _measurements=nullptr;
-    MainWindow * _window=nullptr;
+    MainWindow & _window;
+    ServerInstance & _server;
+    MeasurementsContainer & _measurements;
+    LogContainer & _log;
 };
 #endif // DBMANAGER_H
