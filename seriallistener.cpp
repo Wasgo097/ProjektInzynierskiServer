@@ -13,12 +13,8 @@ SerialListener::~SerialListener(){
     // disconnect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
 }
 void SerialListener::Quit(){
-#ifdef SerialDebug
     QString log="SerialListener quit";
-    qDebug()<<log;
-    _log.AddSerialLogs(log);
-    _window.AddLogToSerial(log);
-#endif
+    SerialDebug(log)
     terminate();
     quit();
 }
@@ -29,9 +25,7 @@ void SerialListener::run(){
         while(!_serial->isOpen()){
             if(_serial->open(QIODevice::ReadWrite)){
                 QString log="Serial Listener opening successfully";
-                qDebug()<<log;
-                _log.AddSerialLogs(log);
-                _window.AddLogToSerial(log);
+                SerialDebug(log)
                 //connect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
             }
         }
@@ -43,9 +37,7 @@ void SerialListener::run(){
                // disconnect(_serial.get(),&QSerialPort::readyRead,this,&SerialListener::SerialReceived);
                 _serial->close();
                 QString log="Serial Listener closed";
-                qDebug()<<log;
-                _log.AddSerialLogs(log);
-                _window.AddLogToSerial(log);
+                SerialDebug(log)
             }
         }
     }
@@ -86,12 +78,8 @@ void SerialListener::SerialReceived(){
             line=templist[0];
             _serial_buffer="";
         }
-#ifdef SerialDebug
         QString log="SERIAL LISTENER READ: "+line+" date "+date.toString(Qt::DateFormat::ISODate);
-        qDebug()<<log;
-        _log.AddSerialLogs(log);
-        _window.AddLogToSerial(log);
-#endif
+        SerialDebug(log)
         auto list=line.split('|');
         if(list.size()==2){
             int Id,Data;
@@ -104,20 +92,14 @@ void SerialListener::SerialReceived(){
                     std::shared_ptr<Measurement> ptr(slavemeasurement);
                     _measurements.Push(ptr);
                 }
-#ifdef SerialDebug
                 else{
                     QString log="Sensor Id is invalid";
-                    qDebug()<<log;
-                    _log.AddSerialLogs(log);
-                    _window.AddLogToSerial(log);
+                    SerialDebug(log)
                 }
-#endif
             }
             else{
                 QString log="Error with convert qstring to int(slave) serial";
-                qDebug()<<log;
-                _log.AddSerialLogs(log);
-                _window.AddLogToSerial(log);
+                SerialDebug(log)
             }
 
         }
@@ -135,27 +117,19 @@ void SerialListener::SerialReceived(){
                     std::shared_ptr<Measurement> ptr(mastermeasurement);
                     _measurements.Push(ptr);
                 }
-#ifdef SerialDebug
                 else{
                     QString log="Sensor Id is invalid";
-                    qDebug()<<log;
-                    _log.AddSerialLogs(log);
-                    _window.AddLogToSerial(log);
+                    SerialDebug(log)
                 }
-#endif
             }
             else{
                 QString log="Error with convert qstring to int(master) serial";
-                qDebug()<<log;
-                _log.AddSerialLogs(log);
-                _window.AddLogToSerial(log);
+                SerialDebug(log)
             }
         }
         else{
             QString log="Server read invalid data from serial";
-            qDebug()<<log;
-            _log.AddSerialLogs(log);
-            _window.AddLogToSerial(log);
+            SerialDebug(log)
         }
     }
 }

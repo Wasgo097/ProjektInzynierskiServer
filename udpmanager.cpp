@@ -10,22 +10,17 @@ UdpManager::UdpManager(MainWindow &window,ServerInstance& server,MeasurementsCon
     _server{server},_measurements{measurements_container},_log{log},_PORT{port}{
     if(!_socket.bind(_PORT)){
         QString log=_socket.errorString()+"\n"+"Listening unsuccessfully, end thread";
-        qDebug()<<log;
-        _log.AddUdpLogs(log);
-        _window.AddLogToUdp(log);
+        UDPDebug(log)
         this->terminate();
-        //this->deleteLater();
     }
     else{
         QString log="Started udp on localhost : "+QString::number(_PORT) ;
-        qDebug()<<log;
-        _log.AddUdpLogs(log);
-        _window.AddLogToUdp(log);
+        UDPDebug(log)
         const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
         for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
             if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost){
                  _localIp= address.toString();
-                 qDebug()<<"Local ip: "<<_localIp;
+                 UDPDebug("Local ip: "+_localIp)
                  break;
             }
         }
@@ -61,12 +56,8 @@ void UdpManager::ReadyRead(){
                     line=templist[0];
                     _udp_buffer="";
                 }
-        #ifdef UDPDebug
                 QString log="UDP LISTENER READ: "+line+" from "+datagram.senderAddress().toString()+" port "+datagram.senderPort()+" date "+date.toString(Qt::DateFormat::ISODate);
-                qDebug()<<log;
-                _log.AddUdpLogs(log);
-                _window.AddLogToUdp(log);
-        #endif
+                UDPDebug(log)
                 auto list=line.split('|');
                 if(list.size()==2){
                     int Id,Data;
@@ -79,20 +70,14 @@ void UdpManager::ReadyRead(){
                             std::shared_ptr<Measurement> ptr(slavemeasurement);
                             _measurements.Push(ptr);
                         }
-        #ifdef UDPDebug
                         else{
                             QString log="Sensor Id is invalid";
-                            qDebug()<<log;
-                            _log.AddUdpLogs(log);
-                            _window.AddLogToUdp(log);
+                            UDPDebug(log)
                         }
-        #endif
                     }
                     else{
                         QString log="Error with convert qstring to int(slave) udplistener";
-                        qDebug()<<log;
-                        _log.AddUdpLogs(log);
-                        _window.AddLogToUdp(log);
+                        UDPDebug(log)
                     }
                 }
                 else if(list.size()==3){
@@ -109,27 +94,19 @@ void UdpManager::ReadyRead(){
                             std::shared_ptr<Measurement> ptr(mastermeasurement);
                             _measurements.Push(ptr);
                         }
-        #ifdef UDPDebug
                         else{
                             QString log="Sensor Id is invalid";
-                            qDebug()<<log;
-                            _log.AddUdpLogs(log);
-                            _window.AddLogToUdp(log);
+                            UDPDebug(log)
                         }
-        #endif
                     }
                     else {
                         QString log="Error with convert qstring to int(master) udplistener";
-                        qDebug()<<log;
-                        _log.AddUdpLogs(log);
-                        _window.AddLogToUdp(log);
+                        UDPDebug(log)
                     }
                 }
                 else{
                     QString log="Server read invalid data from udp";
-                    qDebug()<<log;
-                    _log.AddUdpLogs(log);
-                    _window.AddLogToUdp(log);
+                    UDPDebug(log)
                 }
             }
         }

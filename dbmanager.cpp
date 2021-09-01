@@ -19,12 +19,8 @@ DBManager::~DBManager(){
     }
 }
 void DBManager::Quit(){
-#ifdef DBManagerDebug
     QString log="Manager quit";
-    qDebug()<<log;
-    _log.AddDBManagerLogs(log);
-    _window.AddLogToDBManager(log);
-#endif
+    DBManagerDebug(log)
     terminate();
     quit();
 }
@@ -37,15 +33,11 @@ void DBManager::run(){
 #endif
     if(_db.open()){
         QString log="DB Manager connecting successfully";
-        qDebug()<<log;
-        //LogContainer::GetInstance()->AddDBManagerLogs(log);
-        _window.AddLogToDBManager(log);
+        DBManagerDebug(log)
     }
     else{
         QString log="DB Manager connecting unsuccessfully, end thread";
-        qDebug()<<log;
-        //LogContainer::GetInstance()->AddDBManagerLogs(log);
-        _window.AddLogToDBManager(log);
+        DBManagerDebug(log)
         this->terminate();
         return;
     }
@@ -58,12 +50,10 @@ void DBManager::run(){
         }
         else{
             QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
-            qDebug()<<log;
-            _log.AddDBManagerLogs(log);
-            _window.AddLogToDBManager(log);
+            DBManagerDebug(log)
         }
    // }
-    QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
+    //QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
     if(queryid.exec()){
         while(queryid.next()){
             int id=queryid.value(0).toInt();
@@ -74,9 +64,7 @@ void DBManager::run(){
     }
     else{
         QString log="ERROR: Can't get sensors from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
-        qDebug()<<log;
-        _log.AddDBManagerLogs(log);
-        _window.AddLogToDBManager(log);
+        DBManagerDebug(log)
     }
     while(_db.isOpen()){
         QString cmd;
@@ -116,9 +104,7 @@ void DBManager::run(){
                     QSqlQuery temp_query;
                     if(!temp_query.exec(cmd)){
                         QString log="Error with buffer "+temp_query.lastError().text()+"\t"+cmd;
-                        qDebug()<<log;
-                        _log.AddDBManagerLogs(log);
-                        _window.AddLogToDBManager(log);
+                        DBManagerDebug(log)
                     }
                     else{
                         //add fullmeas  to chart buffer
@@ -126,12 +112,8 @@ void DBManager::run(){
                         MeasurementFull * meas=new MeasurementFull(id,measurement->GetTime(),measurementparams[2].toInt(),condition);
                         std::shared_ptr<MeasurementFull> tempptr(meas);
                         _measurements.AddValidMeasurment(tempptr);
-#ifdef DBManagerDebug
                         QString log="Added data from buffer";
-                        qDebug()<<log;
-                        _log.AddDBManagerLogs(log);
-                        _window.AddLogToDBManager(log);
-#endif
+                        DBManagerDebug(log)
                     }
                 }
             }
@@ -144,33 +126,19 @@ void DBManager::run(){
         }
         if(cmd!=""){
             if(query.exec(cmd)){
-#ifdef DBManagerDebug
                 QString log="Data added to db";
-                qDebug()<<log;
-                _log.AddDBManagerLogs(log);
-                _window.AddLogToDBManager(log);
+                DBManagerDebug(log)
             }
             else{
                 QString log="ERROR WITH QUERY\n"+_db.lastError().text()+"\t"+query.lastError().text();
-                qDebug()<<log;
-                _log.AddDBManagerLogs(log);
-                _window.AddLogToDBManager(log);
-#endif
+                DBManagerDebug(log)
             }
         }
-#ifdef GLOBAL_DEBUG
         else{
             QString log="CMD is null";
-            qDebug()<<log;
-            LogContainer::GetInstance()->AddDBManagerLogs(log);
-            _window->AddLogToDBManager(log);
+            DBManagerDebug(log)
         }
-#endif
     }
-#ifdef DBManagerDebug
     QString log="DB closed";
-    qDebug()<<log;
-    _log.AddDBManagerLogs(log);
-    _window.AddLogToDBManager(log);
-#endif
+    DBManagerDebug(log)
 }

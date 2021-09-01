@@ -17,12 +17,8 @@ ServerInstance::ServerInstance(MainWindow &window,const QString & serialport,con
 }
 void ServerInstance::StartListeners(const QString &serialport){
     if(_udpmanager){
-#ifdef ServerDebug
         QString log="Start existing udplistener";
-        qDebug()<<log;
-        _log->AddServerLogs(log);
-        _window.AddLogToServer(log);
-#endif
+        ServerDebug(log)
         _udpmanager->start();
     }
 //    else{
@@ -37,12 +33,8 @@ void ServerInstance::StartListeners(const QString &serialport){
 //        _udpmanager->start();
 //    }
     if(_seriallistener){
-#ifdef ServerDebug
         QString log="Start existing seriallistener";
-        qDebug()<<log;
-        _log->AddServerLogs(log);
-        _window.AddLogToServer(log);
-#endif
+        ServerDebug(log)
         _seriallistener->start();
     }
 //    else{
@@ -81,12 +73,8 @@ void ServerInstance::StopListeners(){
 }
 void ServerInstance::StartDatabase(){
     if(_dbManager){
-#ifdef ServerDebug
         QString log="Start existing db manager";
-        qDebug()<<log;
-        _log->AddServerLogs(log);
-        _window.AddLogToServer(log);
-#endif
+        ServerDebug(log)
         _dbManager->start();
     }
 //    else{
