@@ -1,6 +1,5 @@
 #include "measurement.h"
 
-
 QString Condition::ToQStr() const{
     return QString::number(Temperature)+"|"+QString::number(Humidity);
 }
@@ -39,6 +38,10 @@ QString MeasurementSlave::GetMeasurement() const{
 
 MeasuremntType MeasurementSlave::GetMeasurementType() const{
     return MeasuremntType::Slave;
+}
+
+int MeasurementSlave::GetData() const{
+    return _data;
 }
 
 MeasurementMaster::MeasurementMaster(int Id, QDateTime Time, Condition Condition):Measurement{Id,Time},_condition{Condition}{

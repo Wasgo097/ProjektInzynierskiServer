@@ -43,7 +43,7 @@ public:
     virtual QString GetMeasurement()const override;
     virtual MeasuremntType GetMeasurementType() const override;
     virtual ~MeasurementSlave()=default;
-    int GetData()const{return _data;}
+    int GetData()const;
 };
 
 class MeasurementMaster:virtual public Measurement{

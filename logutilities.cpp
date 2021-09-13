@@ -6,7 +6,7 @@ void Logs::AddUdpLogs(QString log){
     std::shared_ptr<QString> tempsharptr(tempptr);
     AllLogs.push_back(tempsharptr);
     UDPListenerLogs.push_back(tempsharptr);
-    while(AllLogs.size()>50)
+    while(AllLogs.size()>200)
         AllLogs.pop_front();
     while(UDPListenerLogs.size()>50)
         UDPListenerLogs.pop_front();

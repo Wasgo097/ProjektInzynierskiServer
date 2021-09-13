@@ -42,36 +42,35 @@ void LogContainer::SaveLog(LogType Type){
     file_name="logs\\"+file_name;
     std::fstream file;
     file.open(file_name.c_str(),std::fstream::out);
-    if(file.is_open()==true){
-        if(Type==LogType::All){
-            for(auto & log:_logs.Resource->AllLogs){
-                file<<log->toStdString()<<std::endl;
-            }
+    if(!file.is_open()){
+        _server.AddServerLog("Error: Cant create log file!!");
+        return;
+    }
+    if(Type==LogType::All){
+        for(auto & log:_logs.Resource->AllLogs){
+            file<<log->toStdString()<<std::endl;
         }
-        else if (Type==LogType::Serial) {
-            for(auto & log:_logs.Resource->SerialListenerLogs){
-                file<<log->toStdString()<<std::endl;
-            }
+    }
+    else if (Type==LogType::Serial) {
+        for(auto & log:_logs.Resource->SerialListenerLogs){
+            file<<log->toStdString()<<std::endl;
         }
-        else if (Type==LogType::Server) {
-            for(auto & log:_logs.Resource->ServerLogs){
-                file<<log->toStdString()<<std::endl;
-            }
+    }
+    else if (Type==LogType::Server) {
+        for(auto & log:_logs.Resource->ServerLogs){
+            file<<log->toStdString()<<std::endl;
         }
-        else if(Type==LogType::Udp){
-            for(auto & log:_logs.Resource->UDPListenerLogs){
-                file<<log->toStdString()<<std::endl;
-            }
+    }
+    else if(Type==LogType::Udp){
+        for(auto & log:_logs.Resource->UDPListenerLogs){
+            file<<log->toStdString()<<std::endl;
         }
-        else{
-            for(auto & log:_logs.Resource->DBManagerLogs){
-                file<<log->toStdString()<<std::endl;
-            }
-        }
-        _server.AddServerLog("Create new log file "+QString::fromStdString(file_name));
-        file.close();
     }
     else{
-        _server.AddServerLog("Error: Cant create log file!!");
+        for(auto & log:_logs.Resource->DBManagerLogs){
+            file<<log->toStdString()<<std::endl;
+        }
     }
+    _server.AddServerLog("Create new log file "+QString::fromStdString(file_name));
+    file.close();
 }

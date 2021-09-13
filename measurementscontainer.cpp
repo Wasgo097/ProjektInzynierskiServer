@@ -26,9 +26,6 @@ void MeasurementsContainer::Push(std::shared_ptr<Measurement> Item){
 const int &MeasurementsContainer::GetBufferSize(){
     return _BUFFER_SIZE;
 }
-void MeasurementsContainer::SetBufferSize(int value){
-    _BUFFER_SIZE=value;
-}
 std::list<std::shared_ptr<MeasurementFull>> MeasurementsContainer::GetMeasurementsForPlotting(int deviceid,int count){
     std::list<std::shared_ptr<MeasurementFull>> temp;
     std::lock_guard(_current_measurements.Resource_mtx);
@@ -46,7 +43,7 @@ std::list<std::shared_ptr<MeasurementFull>> MeasurementsContainer::GetMeasuremen
             temp.push_back(currentmeasurement);
             tempcount++;
             if(tempcount==count)
-                break;
+                return temp;
         }
     }
     return temp;
