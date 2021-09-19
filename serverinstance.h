@@ -30,7 +30,7 @@ public:
     void SetOnWindowUIMeasurementsCount(int count);
     void AddServerLog(const QString &log);
     std::list<std::shared_ptr<MeasurementFull>> GetMeasurementsForPlotting(int deviceid,int count);
-    //void AddSensor(Sensor sensor);
+    void AddSensor(Sensor sensor);
     //int IptoId(std::string ip);
 private:
     MainWindow & _window;

@@ -3,6 +3,7 @@
 #include "measurementscontainer.h"
 #include "serverinstance.h"
 #include <algorithm>
+#include <string>
 #include <QSqlQuery>
 #include <QPluginLoader>
 #include <QVariant>
@@ -41,30 +42,26 @@ void DBManager::run(){
         this->terminate();
         return;
     }
-    QSqlQuery queryid("Select DISTINCT Id from Sensors;");
-    if(queryid.exec()){
-        while(queryid.next()){
-            _server.AddSensorId(queryid.value(0).toInt());
+    QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
+    if(querysensors.exec()){
+        while(querysensors.next()){
+            bool checkid;
+            int id=querysensors.value(0).toInt(&checkid);
+            std::string type=querysensors.value(1).toString().toStdString();
+            std::string mac=querysensors.value(2).toString().toStdString();
+            if(checkid&&type=="Slave"){
+                Sensor sensor(id,type,mac);
+                _server.AddSensor(sensor);
+                _server.AddSensorId(id);
+            }
         }
     }
     else{
-        QString log="ERROR: Can't get sensor id's from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
+        QString log="ERROR: Can't get sensors from db: "+_db.lastError().text()+"\t"+querysensors.lastError().text();
         DBManagerDebug(log)
+        this->terminate();
+        return;
     }
-    //to do during added mac functionality
-//    QSqlQuery querysensors("SELECT Id,Type,Mac from Sensors;");
-//    if(queryid.exec()){
-//        while(queryid.next()){
-//            int id=queryid.value(0).toInt();
-//            std::string type=queryid.value(1).toString().toStdString();
-//            std::string mac=queryid.value(2).toString().toStdString();
-//            Sensor sensor(id,type,mac);
-//        }
-//    }
-//    else{
-//        QString log="ERROR: Can't get sensors from db: "+_db.lastError().text()+"\t"+queryid.lastError().text();
-//        DBManagerDebug(log)
-//    }
     while(_db.isOpen()){
         QString cmd;
         ////params descriptions in doc
@@ -72,6 +69,7 @@ void DBManager::run(){
         auto measurement=_measurements.Pop();
         auto measurementstring=measurement->GetMeasurement();
         auto measurementparams=measurementstring.split('|');
+        //slave
         if(measurement->GetMeasurementType()==MeasuremntType::Slave){
             Condition conditions=_server.GetConditions();
             if(conditions!=Condition::DefaultCondition()){

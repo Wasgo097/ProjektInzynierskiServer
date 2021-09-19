@@ -14,7 +14,7 @@ ServerInstance::ServerInstance(MainWindow &window,const QString & serialport,con
     _seriallistener=std::make_unique<SerialListener>(_window,*this,*_measurements,*_log,_serialport);
     _dbManager=std::make_unique<DBManager>(_window,*this,*_measurements,*_log);
     _valid_sensor_id.Resource=std::make_shared<std::list<int>>();
-    _sensors.Resource=std::make_unique<std::list<Sensor>>();
+    _sensors.Resource=std::make_shared<std::list<Sensor>>();
 }
 ServerInstance::~ServerInstance(){
     StopListeners();
@@ -109,11 +109,10 @@ void ServerInstance::AddServerLog(const QString &log){
 std::list<std::shared_ptr<MeasurementFull> > ServerInstance::GetMeasurementsForPlotting(int deviceid, int count){
     return _measurements->GetMeasurementsForPlotting(deviceid,count);
 }
-//void ServerInstance::AddSensor(Sensor sensor){
-//    _sensors.Resource_mtx.lock();
-//    _sensors.Resource->push_back(sensor);
-//    _sensors.Resource_mtx.unlock();
-//}
+void ServerInstance::AddSensor(Sensor sensor){
+    std::lock_guard guard(_sensors.Resource_mtx);
+    _sensors.Resource->push_back(sensor);
+}
 //int ServerInstance::IptoId(std::string ip){
 //    QString tempip=QString::fromStdString(ip);
 //    QString tempmac;
